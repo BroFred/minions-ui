@@ -40,6 +40,7 @@ export const Button: React.FC<ButtonProps> = ({
       buttonProps = {
         bg: 'pri.01',
         color: 'white',
+        
         _hover:{
           background: "pri.02",
         }
@@ -51,7 +52,7 @@ export const Button: React.FC<ButtonProps> = ({
   }
 
   return (
-    <CButton {...buttonProps}>
+    <CButton {...buttonProps} borderRadius="sm">
       Button
   </CButton>
     
