@@ -1,58 +1,79 @@
-import {ThSort, ThSortProps} from '../components/Table';
-import React from 'react';
+import { ThSort, TdPure, ThSortProps, ThRow } from '../components/Table';
+import React,{useState} from 'react';
 import { Story, Meta } from '@storybook/react';
 
 import {
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
-  } from "@chakra-ui/react"
+    Grid,
+} from "@chakra-ui/react"
 export default {
-  title: 'Example/Table',
-  component: ThSort,
+    title: 'Example/Table',
+    component: ThSort,
 } as Meta;
 
-const Template: Story<ThSortProps> = (args) =>{
-   return <Table variant="simple">
-  <TableCaption>Imperial to metric conversion factors</TableCaption>
-  <Thead>
-    <Tr>
-      <Th p="space-0"><ThSort {...args} >To convert</ThSort></Th>
-      <Th><ThSort {...args} >into</ThSort></Th>
-      <Th isNumeric><ThSort {...args} >multiply by</ThSort></Th>
-    </Tr>
-  </Thead>
-  <Tbody>
-    <Tr>
-      <Td>inches</Td>
-      <Td>millimetres (mm)</Td>
-      <Td isNumeric>25.4</Td>
-    </Tr>
-    <Tr>
-      <Td>feet</Td>
-      <Td>centimetres (cm)</Td>
-      <Td isNumeric>30.48</Td>
-    </Tr>
-    <Tr>
-      <Td>yards</Td>
-      <Td>metres (m)</Td>
-      <Td isNumeric>0.91444</Td>
-    </Tr>
-  </Tbody>
-  <Tfoot>
-    <Tr>
-      <Th>To convert</Th>
-      <Th>into</Th>
-      <Th isNumeric>multiply by</Th>
-    </Tr>
-  </Tfoot>
-</Table>
-} ;
+const Template: Story<ThSortProps> = (args) => {
+    const [sort, setSort] = useState({sortKey:'', isSortedDes:undefined})
+    return <div><Grid templateColumns="1fr 1fr 1fr 1fr 1fr" sx={{
+        '*:nth-child(10n)': {
+          background: 'nl.09',
+        },
+        '*:nth-child(10n -1)': {
+            background: 'nl.09',
+        },
+        '*:nth-child(10n - 2)': {
+            background: 'nl.09',
+        },
+        '*:nth-child(10n - 3)': {
+            background: 'nl.09',
+        },
+        '*:nth-child(10n - 4)': {
+            background: 'nl.09',
+        }
+      }}>
+        <ThRow>
+            <ThSort {...args}  sort={[sort, setSort]} sortKey="a"/>
+            <ThSort {...args}  sort={[sort, setSort]} sortKey="b">agjhljahgjdhgjdghjfhgdjsghfdjkhsjghsjlghjkhgfdsjklhgfdsljkghfdljkfghfljkfhslkjhfgjkldhgsldfkghlkjf</ThSort>
+            <ThSort {...args}  sort={[sort, setSort]} sortKey="c"/>
+            <ThSort {...args}  sort={[sort, setSort]} sortKey="d"/>
+            <ThSort {...args}  sort={[sort, setSort]} sortKey="e"/>
+        </ThRow>
+        <ThRow>
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+        </ThRow>
+        <ThRow>
+            <TdPure>fmajfhjk.hfhajkhgjdhgsjghfjsdghfjsgfhjhgsjfdhsjghdjghdfjghdsjkghfdjshgjkshgjskghfjlgkhsjshlhgfdljkghsjkghdslg</TdPure>
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+        </ThRow>
+        <ThRow>
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+        </ThRow>
+        <ThRow>
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+        </ThRow>
+        <ThRow>
+            <TdPure {...args} textAlign="right"/>
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+            <TdPure {...args} />
+        </ThRow>
+        </Grid>
+    </div>
+};
 
 export const Sort = Template.bind({});
 Sort.args = {

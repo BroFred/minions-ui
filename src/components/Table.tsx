@@ -1,42 +1,91 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
     Flex,
     Box,
     IconButton,
-    HStack
+    GridItem,
 } from "@chakra-ui/react"
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
 
 
-type sort = boolean | undefined;
-export interface ThSortProps {
+type textAlign = 'left' | 'right' | undefined;
+type size = 'sm' | 'mid' | 'lg' | undefined;
+type sort = {
+    sortKey: string;
+    isSortedDesc: boolean | undefined;
+}
+
+export interface TableText {
     children: React.ReactNode;
-    sort?: [ sort, React.Dispatch<React.SetStateAction<sort>> ]
+    size?: size;
+    textAlign?: textAlign;
+}
+
+export interface ThSortProps extends TableText {
+    sortKey: string;
+    sort: [sort, React.Dispatch<React.SetStateAction<sort>>]
 }
 
 
-export const ThSort = ({ children, sort }: ThSortProps): JSX.Element => {
-    const [_isSortedDesc, _setIsSortedDesc] = useState<sort>();
-    let isSortedDesc:sort, setIsSortedDesc: React.Dispatch<React.SetStateAction<sort>>;
-    if(sort){
-        [isSortedDesc,setIsSortedDesc] = sort;
+const getTextAlign = (textAlign: textAlign): string => textAlign === 'right' ? 'flex-end' : 'space-between';
+const getH = (size: size): number => {
+    switch (size) {
+        case 'sm':
+            return 8;
+        case 'mid':
+            return 10;
+        case 'lg':
+            return 12;
+        default:
+            return 10;
     }
-    else{
-        [isSortedDesc,setIsSortedDesc] = [_isSortedDesc, _setIsSortedDesc];
+}
+export const CellContainer = ({ children }: { children: React.ReactNode }): JSX.Element => {
+    return <Box textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="4" maxW={96} minW={12}>{children}</Box>;
+};
+
+export const ThRow = ({ children }: { children: React.ReactNode[] }) => {
+    return <>{children}</>
+}
+
+export const ThPure = ({ children, size, textAlign }: TableText): JSX.Element => {
+    const justifyContent = getTextAlign(textAlign);
+    const h = getH(size);
+    return <Flex alignItems="center" bg={'nl.08'} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor="nl.05">
+        <CellContainer>{children}</CellContainer>
+    </Flex>
+}
+
+export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps): JSX.Element => {
+    const [{ isSortedDesc, sortKey: sortingKey }, setIsSortedDesc] = sort;
+    const isSelfSorting = sortingKey === sortKey;
+    const justifyContent = getTextAlign(textAlign);
+    const setSorted = (value: boolean): boolean | undefined => {
+        if (!isSelfSorting) {
+            return value
+        }
+        return isSortedDesc === value ? undefined : value;
     }
-    return <Flex alignItems="center" bg={'nl.08'} border="1px" borderColor="nl.05" justifyContent="space-between">
-        <Box mx="3.5">{children}</Box>
+    const h = getH(size);
+    return <Flex alignItems="center" bg={'nl.08'} outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}>
+        <CellContainer>{children}</CellContainer>
         <Flex flexDirection="column">
-            <IconButton onClick={ ()=>setIsSortedDesc(isSortedDesc===false ? undefined: false)}  borderRadius="full" aria-label="table sort" icon={<ChevronUpIcon />} variant="ghost"   h={2} w={2} color={isSortedDesc===false? 'pri.01' : 'nl.01' }/>
-            <IconButton  onClick={ ()=>setIsSortedDesc(isSortedDesc===true ? undefined: true)}  borderRadius="full" aria-label="table sort" icon={<ChevronDownIcon />} variant="ghost"  h={2} w={2} color={isSortedDesc===true? 'pri.01' : 'nl.01'}/>
+            <IconButton onClick={() => setIsSortedDesc({
+                sortKey,
+                isSortedDesc: setSorted(false)
+            })} borderRadius="full" aria-label="table sort" icon={<ChevronUpIcon />} variant="ghost" h={2} w={2} color={(isSelfSorting && isSortedDesc === false) ? 'pri.01' : 'nl.01'} />
+            <IconButton onClick={() => setIsSortedDesc(
+                {
+                    sortKey,
+                    isSortedDesc: setSorted(true)
+                }
+            )} borderRadius="full" aria-label="table sort" icon={<ChevronDownIcon />} variant="ghost" h={2} w={2} color={(isSelfSorting && isSortedDesc === true) ? 'pri.01' : 'nl.01'} />
         </Flex>
     </Flex>
+}
+
+export const TdPure = ({ children, size, textAlign }: TableText) => {
+    const justifyContent = getTextAlign(textAlign);
+    const h = getH(size);
+    return <GridItem bg="white"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer>{children}</CellContainer></Flex></GridItem>
 }
