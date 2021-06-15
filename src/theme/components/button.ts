@@ -94,6 +94,22 @@ const button = {
         opacity: 1,
       }
     }),
+    'secondary-outline': (props: VariantProps) => ({
+      bg: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
+      color: props.colorMode === 'light' ? 'nl.02' : 'nl.02',
+      borderRadius: '0.25rem',
+      borderWidth: '0.063rem',
+      borderColor: props.colorMode === 'light' ? 'nl.05' : 'nl.05',
+      borderStyle: 'solid',
+      minWidth: '2rem',
+      minHeight: '2rem',
+      textAlign: 'center',
+      padding: '0.312rem 0.25rem',
+      _active: {
+        borderColor: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
+        color: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
+      }
+    })
   },
   defaultProps: {
     variant: 'primary',

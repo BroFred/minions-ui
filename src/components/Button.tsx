@@ -6,7 +6,7 @@ export interface ButtonProps extends CButtonProps {
   /**
    * button type
    */
-  mode?: 'primary' | 'secondary' | 'tertiary' | 'text';
+  mode?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'secondary-outline';
   /**
    * button size
    */
