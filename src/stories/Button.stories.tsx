@@ -2,7 +2,7 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import { EmailIcon } from '@chakra-ui/icons';
 
-import { Button, ButtonProps } from '../components/Button/index';
+import { Button, ButtonProps } from '../components/Button';
 
 export default {
   title: 'Example/Button',
@@ -16,7 +16,7 @@ export const Primary = Template.bind({});
 Primary.args = {
   mode: 'primary',
   children: 'Button',
-  disabled: true,
+  disabled: false,
   onClick: () => {
     alert(111)
   },
