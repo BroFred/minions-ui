@@ -5,7 +5,7 @@ import {
     Icon,
     Flex
 } from "@chakra-ui/react"
-import { map, range, splitAt, takeLast, take } from 'ramda';
+import { map, range, splitAt, takeLast, take, filter } from 'ramda';
 import { FaEllipsisH, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 export interface PaginationProps {
     pageLength: number;
@@ -23,7 +23,7 @@ const Pagination = ({ pageLength, page:{currentPage, onPageChange} }: Pagination
     const midHeads = takeLast(Math.min(currentPage - 1, 2), heads);
     const midTails = take(5 - Math.min(currentPage - 1, 2), tails);
     const compensation = 5 - midHeads.length - midTails.length;
-    const mid = [...range((midHeads[0]||0)-compensation, midHeads[0]||0),...midHeads,...midTails];
+    const mid = filter((v:number)=>v>0,[...range((midHeads[0]||0)-compensation, midHeads[0]||0),...midHeads,...midTails]);
 
     return <Flex>
      <IconButton onClick={()=>onPageChange(Math.max(1, currentPage - 1))} aria-label="pagination" icon={<Icon as={FaAngleLeft} color='nl.02'/>}></IconButton>
@@ -42,7 +42,7 @@ const Pagination = ({ pageLength, page:{currentPage, onPageChange} }: Pagination
         <IconButton onClick={()=>onPageChange(Math.min(pageLength, currentPage + 5))} aria-label="pagination" icon={<Icon as={FaEllipsisH} color='nl.02'/>}></IconButton>
     }
     {
-        mid[4]!== pageLength &&  <Button size="md"  onClick={()=>onPageChange(pageLength)} key={pageLength} color={pageLength===currentPage ? 'pri.01' : 'nl.02'} mx={1}  fontSize={'sm'} borderRadius={'base'}>{pageLength}</Button>
+        mid[4]< pageLength &&  <Button size="md"  onClick={()=>onPageChange(pageLength)} key={pageLength} color={pageLength===currentPage ? 'pri.01' : 'nl.02'} mx={1}  fontSize={'sm'} borderRadius={'base'}>{pageLength}</Button>
     }
      <IconButton aria-label="pagination" onClick={()=>onPageChange(Math.min(pageLength, currentPage + 1))} icon={<Icon as={FaAngleRight} />} color='nl.02'></IconButton>
     </Flex>

@@ -11,14 +11,19 @@ export default {
 
 const Template: Story<PaginationProps> = (args) => {
     const [page, onPageChange] = useState(1);
-    console.log(page)
     return <Pagination {...args} page={{
         currentPage: page,
         onPageChange
     }}></Pagination >
 }
 
-export const PaginationTemplate = Template.bind({});
-PaginationTemplate.args = {
+export const PaginationMany = Template.bind({});
+PaginationMany.args = {
     pageLength: 1000
+};
+
+
+export const PaginationMinial = Template.bind({});
+PaginationMinial.args = {
+    pageLength: 1
 };

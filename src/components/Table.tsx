@@ -4,9 +4,11 @@ import {
     Box,
     IconButton,
     GridItem,
+    Grid
 } from "@chakra-ui/react"
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
-
+import { repeat, reduce,range } from 'ramda';
+import { FaSyringe } from 'react-icons/fa';
 
 type textAlign = 'left' | 'right' | undefined;
 type size = 'sm' | 'mid' | 'lg' | undefined;
@@ -26,6 +28,18 @@ export interface ThSortProps extends TableText {
     sort: [sort, React.Dispatch<React.SetStateAction<sort>>]
 }
 
+interface TableProps {
+    children : React.ReactNode;
+    strip?: boolean;
+    columns: any[];
+    data: any[][];
+}
+
+type stripStyle = {
+    [key:string]: {
+        background: string;
+    } | {};
+}
 
 const getTextAlign = (textAlign: textAlign): string => textAlign === 'right' ? 'flex-end' : 'space-between';
 const getH = (size: size): number => {
@@ -88,4 +102,24 @@ export const TdPure = ({ children, size, textAlign }: TableText) => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
     return <GridItem bg="white"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer>{children}</CellContainer></Flex></GridItem>
+}
+
+
+
+export const Table = ({ children, strip=false, columns=[], data=[] }:TableProps): JSX.Element => {
+    const columnLen = columns.length;
+    const girdTemplate = repeat('1fr', columnLen).join(" ");
+    const stripStyle = strip ? reduce((aggregate:stripStyle, offset:number):stripStyle =>{
+        return {
+            ...aggregate,
+            [`*:nth-of-type(${2*columnLen}n - ${offset})`]: {
+                background: 'nl.09',
+            }
+        }
+    },
+    {},range(0,columnLen)):{};
+    return <Grid templateColumns={girdTemplate} sx={stripStyle}>
+        {children[0](columns)}
+        {children[1](data)}
+    </Grid>
 }
