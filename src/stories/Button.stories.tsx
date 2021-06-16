@@ -16,6 +16,7 @@ export const Primary = Template.bind({});
 Primary.args = {
   mode: 'primary',
   children: 'Button',
+  isActive: false,
   disabled: false,
   w:32,
   onClick: () => {
