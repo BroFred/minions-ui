@@ -1,10 +1,10 @@
 import React from 'react';
 import {
     IconButton,
-    // Button,
     Icon,
     Flex
 } from "@chakra-ui/react"
+import {Button} from './Button.tsx';
 import { map, range, splitAt, takeLast, take, filter } from 'ramda';
 import { FaEllipsisH, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 export interface PaginationProps {
@@ -26,25 +26,25 @@ const Pagination = ({ pageLength, page:{currentPage, onPageChange} }: Pagination
     const mid = filter((v:number)=>v>0,[...range((midHeads[0]||0)-compensation, midHeads[0]||0),...midHeads,...midTails]);
 
     return <Flex>
-     <Button  mode='secondary-outline' onClick={()=>onPageChange(Math.max(1, currentPage - 1))} aria-label="pagination"><Icon as={FaAngleLeft} color='nl.02'/></Button>
+     <IconButton  variant='secondary-outline' onClick={()=>onPageChange(Math.max(1, currentPage - 1))} aria-label="pagination" color='nl.02' icon={<Icon as={FaAngleLeft} />}/>
     {
         mid[0]!==1 && <Button mode='secondary-outline' onClick={()=>onPageChange(1)} key={1} borderColor={1===currentPage ? 'pri.01' : 'nl.05'} color={1===currentPage ? 'pri.01' : 'nl.02'} mx={1}  fontSize={'sm'} borderRadius={'base'}>{1}</Button>
     }
     {
     mid[0] - 1 >1 &&
-        <Button  mode='secondary-outline' onClick={()=>onPageChange(Math.max(1, currentPage - 5))} aria-label="pagination"><Icon as={FaEllipsisH} color='nl.02'/></Button>
+        <IconButton   variant='secondary-outline' onClick={()=>onPageChange(Math.max(1, currentPage - 5))} aria-label="pagination" icon={<Icon as={FaEllipsisH} color='nl.02'/>}/>
     }
     {map(
         (num) => <Button mode='secondary-outline' onClick={()=>onPageChange(num)} key={num} borderColor={num===currentPage ? 'pri.01' : 'nl.05'} color={num===currentPage ? 'pri.01' : 'nl.02'} mx={1}  fontSize={'sm'} borderRadius={'base'}>{num}</Button>,
         mid
     )}
     {mid[4] + 1 < pageLength &&
-        <Button  mode='secondary-outline' onClick={()=>onPageChange(Math.min(pageLength, currentPage + 5))} aria-label="pagination"><Icon as={FaEllipsisH} color='nl.02'/></Button>
+        <IconButton  variant='secondary-outline' onClick={()=>onPageChange(Math.min(pageLength, currentPage + 5))} aria-label="pagination" color='nl.02' icon={<Icon as={FaEllipsisH}/>}/>
     }
     {
-        mid[4]< pageLength &&  <Button size="md"  onClick={()=>onPageChange(pageLength)} key={pageLength} color={pageLength===currentPage ? 'pri.01' : 'nl.02'} mx={1}  fontSize={'sm'} borderRadius={'base'}>{pageLength}</Button>
+        mid[4]< pageLength &&  <Button mode='secondary-outline' onClick={()=>onPageChange(pageLength)} key={pageLength} color={pageLength===currentPage ? 'pri.01' : 'nl.02'} mx={1}  fontSize={'sm'} borderRadius={'base'}>{pageLength}</Button>
     }
-     <Button  mode='secondary-outline' aria-label="pagination" onClick={()=>onPageChange(Math.min(pageLength, currentPage + 1))} color='nl.02'><Icon as={FaAngleRight} /></Button>
+     <IconButton  variant='secondary-outline' aria-label="pagination" onClick={()=>onPageChange(Math.min(pageLength, currentPage + 1))} color='nl.02' icon={<Icon as={FaAngleRight} />}/>
     </Flex>
 }
 

@@ -17,6 +17,7 @@ Primary.args = {
   mode: 'primary',
   children: 'Button',
   disabled: false,
+  w:32,
   onClick: () => {
     alert(111)
   },
