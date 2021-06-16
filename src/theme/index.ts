@@ -1,7 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
 import colors from "./color";
-import Button from "./components/button";
-import {paginationTheme as Pagination} from '../components/Pagination';
+import { ButtonTheme as Button } from "../components/Button";
+import { paginationTheme as Pagination } from '../components/Pagination';
 const overrides = {
   colors,
   components: {

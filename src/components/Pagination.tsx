@@ -36,7 +36,7 @@ const Pagination = ({ pageLength, page: { currentPage, onPageChange } }: Paginat
     const styles = useStyleConfig('Pagination',{});
 
     return <Flex>
-        <IconButton variant='secondary-outline' size='sm' onClick={() => onPageChange(Math.max(1, currentPage - 1))} aria-label="pagination" {...styles} icon={<Icon as={FaAngleLeft} />} />
+        <IconButton variant='secondary-outline' size='sm' onClick={() => onPageChange(Math.max(1, currentPage - 1))} aria-label="pagination" sx={styles} icon={<Icon as={FaAngleLeft} />} />
         {
             mid[0] !== 1 && <Button mode='secondary-outline' size='sm' onClick={() => onPageChange(1)} key={1} isActive={1 === currentPage} sx={styles}>{1}</Button>
         }

@@ -27,19 +27,19 @@ Primary.args = {
 export const SecondaryWithIcon = IconTemplate.bind({});
 SecondaryWithIcon.args = {
   mode: 'secondary',
-  size: 'large',
+  size: 'lg',
 };
 
 export const Tertiary = Template.bind({});
 Tertiary.args = {
   mode: 'tertiary',
-  size: 'large',
+  size: 'lg',
   children: 'Button',
 };
 
 export const Text = Template.bind({});
 Text.args = {
   mode: 'text',
-  size: 'large',
+  size: 'lg',
   children: 'Button',
 }
