@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button as CButton, ButtonProps as CButtonProps } from "@chakra-ui/react";
-// import {ButtonProps as CButtonProps} from '@chakra-ui/button';
 
 export interface ButtonProps extends CButtonProps {
   /**
@@ -10,7 +9,7 @@ export interface ButtonProps extends CButtonProps {
   /**
    * button size
    */
-  size?: 'small' | 'medium' | 'large';
+  size?: 'sm' | 'md' | 'lg';
   /**
    * Button contents
    */
@@ -26,7 +25,7 @@ export interface ButtonProps extends CButtonProps {
  */
 export const Button: React.FC<ButtonProps> = ({
   mode = 'primary',
-  size = 'medium',
+  size = 'md',
   children,
   ...others
 }) => {

@@ -4,17 +4,26 @@ interface VariantProps {
 }
 const getPaddings = (size: string):object => {
  const paddings = {
-  'large': {
-    padding: '0.875rem 1rem',
+  'lg': {
+    py: '0.875rem',
+    px: '1rem',
   },
-  'medium': {
-    padding: '0.625rem 1rem'
+  'md': {
+    py: '0.625rem',
+    px: '1rem',
   },
-  'small': {
-    padding: '0.375rem 1rem'
+  'sm': {
+    py: '0.375rem',
+    px: '1rem',
   }
  }
  return paddings[size];
+}
+const defaultStyle = {
+  minWidth: '2rem',
+  height: 'auto',
+  borderRadius: '0.25rem',
+  fontSize: '0.875rem',
 }
 const button = { 
   baseStyle: {
@@ -23,8 +32,7 @@ const button = {
   variants: {
     primary: (props: VariantProps) => ({
       ...getPaddings(props.size),
-      borderRadius: '0.25rem',
-      height: 'auto',
+      ...defaultStyle,
       bg: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
       color: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
       _hover:{
@@ -42,8 +50,7 @@ const button = {
     }),
     secondary: (props: VariantProps) => ({
       ...getPaddings(props.size),
-      borderRadius: '0.25rem',
-      height: 'auto',
+      ...defaultStyle,
       bg: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
       color: props.colorMode === 'light' ? 'nl.03' : 'nl.03',
       borderWidth: '0.063rem',
@@ -65,8 +72,7 @@ const button = {
     }),
     tertiary: (props: VariantProps) => ({
       ...getPaddings(props.size),
-      borderRadius: '0.25rem',
-      height: 'auto',
+      ...defaultStyle,
       bg: 'nl.06',
       color: props.colorMode === 'light' ? 'pri.03' : 'pri.03',
       _hover:{
@@ -80,6 +86,8 @@ const button = {
     }),
     text: (props: VariantProps) => ({
       ...getPaddings(props.size),
+      minWidth: '2rem',
+      fontSize: '0.875rem',
       bg: 'transprent',
       color: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
       _hover:{
