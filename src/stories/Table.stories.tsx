@@ -1,4 +1,4 @@
-import { ThSort, TdPure, ThSortProps, ThRow, Table } from '../components/Table';
+import { ThSort, TdPure, ThSortProps, ThRow, Table, ThPure } from '../components/Table';
 import React,{useState} from 'react';
 import { Story, Meta } from '@storybook/react';
 import {map, range,addIndex} from 'ramda';
@@ -20,7 +20,7 @@ const Template: Story<ThSortProps> = (args) => {
     const [sort, setSort] = useState({sortKey:'', isSortedDes:undefined});
     const columns: columns = [
         {
-            columnName: 'a',
+            columnName: '',
             column: 'a',
         },
         {
@@ -80,7 +80,7 @@ const Template: Story<ThSortProps> = (args) => {
     const mapWithIndex= addIndex(map);
     return <Table strip columns={columns} data={data}>
         {
-           (cols)=> map(({columnName, column})=><ThSort key={column}  sort={[sort, setSort]} sortKey={column}>{columnName}</ThSort>, cols)
+           (cols)=> map(({columnName, column})=><ThPure key={column}  sort={[sort, setSort]} sortKey={column}>{columnName}</ThPure>, cols)
         }
         {
            (d)=> mapWithIndex(

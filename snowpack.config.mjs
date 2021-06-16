@@ -24,7 +24,7 @@ export default {
     // "bundle": true,
   },
   packageOptions: {
-    /* ... */
+    external:['react', 'react-dom', '@chakra-ui/react', '@chakra-ui/icons']
   },
   devOptions: {
     /* ... */
