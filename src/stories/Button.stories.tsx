@@ -1,37 +1,43 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
+import { EmailIcon } from '@chakra-ui/icons';
 
-import { Button, ButtonProps } from './Button';
+import { Button, ButtonProps } from '../components/Button';
 
 export default {
   title: 'Example/Button',
   component: Button,
-  argTypes: {
-    backgroundColor: { control: 'color' },
-  },
 } as Meta;
 
 const Template: Story<ButtonProps> = (args) => <Button {...args} />;
+const IconTemplate: Story<ButtonProps> = (args) => <Button  w={200} {...args}><div><EmailIcon style={{marginRight: '0.25rem'}}/>邮件</div></Button>
 
 export const Primary = Template.bind({});
 Primary.args = {
   mode: 'primary',
-  label: 'Button',
+  children: 'Button',
+  disabled: false,
+  onClick: () => {
+    alert(111)
+  },
 };
 
-export const Secondary = Template.bind({});
-Secondary.args = {
-  label: 'Button',
-};
-
-export const Large = Template.bind({});
-Large.args = {
+export const SecondaryWithIcon = IconTemplate.bind({});
+SecondaryWithIcon.args = {
+  mode: 'secondary',
   size: 'large',
-  label: 'Button',
 };
 
-export const Small = Template.bind({});
-Small.args = {
-  size: 'small',
-  label: 'Button',
+export const Tertiary = Template.bind({});
+Tertiary.args = {
+  mode: 'tertiary',
+  size: 'large',
+  children: 'Button',
 };
+
+export const Text = Template.bind({});
+Text.args = {
+  mode: 'text',
+  size: 'large',
+  children: 'Button',
+}
