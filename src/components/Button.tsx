@@ -19,10 +19,6 @@ export interface ButtonProps extends CButtonProps {
    * Optional click handler
    */
   onClick?: () => void;
-  /**
-   * button disable status
-   */
-  disabled?: boolean;
 }
 
 /**
