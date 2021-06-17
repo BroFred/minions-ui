@@ -53,7 +53,7 @@ export const Modal:React.FC<ModalProps> = ({
   return (
     <CModal isOpen={isOpen} {...others} scrollBehavior={'inside'} >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent boxShadow='16'>
         <ModalHeader px='2rem' py='1rem' {...getSpecialCSS()}>{title}</ModalHeader>
         {hasClose && <ModalCloseButton right='2rem' />}
         <ModalBody px='2rem' py='1rem' fontSize='0.875rem' color={`${colorMode === 'light' ? 'nl.02' : 'nl.02'}`}>
