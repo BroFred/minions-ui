@@ -17,6 +17,7 @@
     "@chakra-ui/react": "^1.6.3",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
+    "downshift": "^6.1.3",
     "framer-motion": "^4.1.17",
     "ramda": "^0.21.0",
     "react": "^17.0.2",
