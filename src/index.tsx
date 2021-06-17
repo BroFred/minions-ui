@@ -4,7 +4,7 @@ import * as Pagination from './components/Pagination';
 import theme from './theme';
 
 
-export default {
+export {
   Table,
   Button,
   Pagination,
