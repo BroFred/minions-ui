@@ -7,7 +7,7 @@ import {
     Grid,
 } from "@chakra-ui/react"
 export default {
-    title: 'Example/Table',
+    title: 'Table',
     component: ThSort,
 } as Meta;
 

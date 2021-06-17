@@ -5,7 +5,7 @@ import { EmailIcon } from '@chakra-ui/icons';
 import { Button, ButtonProps } from '../components/Button';
 
 export default {
-  title: 'Example/Button',
+  title: 'Button',
   component: Button,
 } as Meta;
 
