@@ -4,6 +4,7 @@ import * as Pagination from './components/Pagination';
 import * as Radio from './components/Radio';
 import * as CheckBox from './components/CheckBox';
 
+import * as Modal from './components/Modal';
 import theme from './theme';
 
 
@@ -13,6 +14,7 @@ export {
   Pagination,
   Radio,
   CheckBox,
-  theme
+  theme,
+  Modal
 }
 
