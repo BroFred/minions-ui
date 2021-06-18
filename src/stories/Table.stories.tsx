@@ -1,8 +1,8 @@
 import { ThSort, TdPure, ThSortProps, ThRow, Table, ThPure } from '../components/Table';
 import React,{useState} from 'react';
 import { Story, Meta } from '@storybook/react';
-import {map, range,addIndex} from 'ramda';
-
+import {map, range,addIndex, drop} from 'ramda';
+import CheckBox from '../components/CheckBox';
 import {
     Grid,
 } from "@chakra-ui/react"
@@ -21,6 +21,10 @@ const Template: Story<ThSortProps> = (args) => {
     const columns: columns = [
         {
             columnName: '',
+            column: "func"
+        },
+        {
+            columnName: 'a',
             column: 'a',
         },
         {
@@ -80,11 +84,11 @@ const Template: Story<ThSortProps> = (args) => {
     const mapWithIndex= addIndex(map);
     return <Table strip columns={columns} data={data}>
         {
-           (cols)=> map(({columnName, column})=><ThPure key={column}  sort={[sort, setSort]} sortKey={column}>{columnName}</ThPure>, cols)
+           (cols)=> [<ThPure>{}</ThPure>, map(({columnName, column})=><ThSort key={column}  sort={[sort, setSort]} sortKey={column}>{columnName}</ThSort>, drop(1,cols))]
         }
         {
            (d)=> mapWithIndex(
-               (val, index)=> mapWithIndex( (val1, index1)=><TdPure key={`${index}_${index1}`} >{val1}</TdPure>,val ),
+               (val, index)=> [<TdPure><CheckBox m="1"/></TdPure>, mapWithIndex( (val1, index1)=><TdPure key={`${index}_${index1}`} >{val1}</TdPure>,val )],
             d)
         }
     </Table>
