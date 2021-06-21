@@ -5,6 +5,21 @@ export default {
     src: { url: '/dist' },
   },
   plugins: [
+    [
+      'snowpack-plugin-copy',
+      {
+        patterns: [
+          {
+            source: ['types/components/*', ],
+            destination: 'build/types/components',
+          },
+          {
+            source: ['types/*'],
+            destination: 'build/types',
+          },
+        ],
+      },
+    ],
     '@snowpack/plugin-react-refresh',
     '@snowpack/plugin-dotenv',
     [
