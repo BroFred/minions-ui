@@ -1,4 +1,4 @@
-import Pagination, { PaginationProps } from '../components/Pagination';
+import Pagination, { PaginationProps } from '../src/Pagination';
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import { EmailIcon } from '@chakra-ui/icons';
 
-import { Button, ButtonProps } from '../components/Button';
+import { Button, ButtonProps } from '../src/Button';
 
 export default {
   title: 'Button',

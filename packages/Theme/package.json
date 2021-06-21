@@ -1,0 +1,35 @@
+{
+  "name": "@minion-ui/theme",
+  "version": "0.0.1",
+  "description": "theme for ui",
+  "author": "xingyic <cxy1989112@gmail.com>",
+  "homepage": "https://github.com/BroFred/minions-ui#readme",
+  "license": "ISC",
+  "main": "lib/Theme.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BroFred/minions-ui.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/BroFred/minions-ui/issues"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^1.6.4",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "@minion-ui/button": "^0.0.1",
+    "@minion-ui/pagination": "^0.0.1",
+    "@minion-ui/table": "^0.0.1",
+    "framer-motion": "^4.1.17"
+  }
+}

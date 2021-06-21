@@ -5,7 +5,7 @@ import {
     Flex,
     useStyleConfig,
 } from "@chakra-ui/react"
-import { Button } from './Button.tsx';
+import Button from '@minion-ui/button';
 import { map, range, splitAt, takeLast, take, filter } from 'ramda';
 import { FaEllipsisH, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 export interface PaginationProps {

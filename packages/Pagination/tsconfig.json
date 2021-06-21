@@ -1,5 +1,5 @@
 {
-  "include": ["src", "types", "packages/Table/src/Table.stories.tsx", "packages/Pagination/src/Pagination.stories.tsx"],
+  "include": ["src", "types", "stories/Pagination.stories.tsx"],
   "compilerOptions": {
     "module": "esnext",
     "target": "esnext",
@@ -16,7 +16,7 @@
       // More info: https://www.snowpack.dev/guides/streaming-imports
     },
     /* noEmit - Snowpack builds (emits) files, not tsc. */
-    "noEmit": true,
+    // "noEmit": true,
     /* Additional Options */
     "strict": true,
     "skipLibCheck": true,

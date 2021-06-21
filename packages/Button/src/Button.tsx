@@ -1,11 +1,13 @@
 import React from 'react';
 import { Button as CButton, ButtonProps as CButtonProps } from "@chakra-ui/react";
-
+import { map } from 'ramda';
+console.log(map)
+type size = 'sm' | 'md' | 'lg';
 interface VariantProps {
-  size: 'small' | 'medium' | 'large';
+  size: size;
   colorMode: 'light' | 'dark',
 }
-const getPaddings = (size: string):object => {
+const getPaddings = (size: size):object => {
  const paddings = {
   'lg': {
     py: '0.875rem',
