@@ -1,15 +1,15 @@
-import * as Table from './components/Table';
-import * as Button from './components/Button';
-import * as Pagination from './components/Pagination';
-import * as Radio from './components/Radio';
-import * as CheckBox from './components/CheckBox';
+import {Table, TdPure, ThSort, ThPure } from './components/Table';
+import Button from './components/Button';
+import Pagination from './components/Pagination';
+import Radio from './components/Radio';
+import CheckBox from './components/CheckBox';
 
-import * as Modal from './components/Modal';
+import Modal from './components/Modal';
 import theme from './theme';
 
 
 export {
-  Table,
+  Table,TdPure, ThSort, ThPure,
   Button,
   Pagination,
   Radio,

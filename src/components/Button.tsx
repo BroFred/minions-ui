@@ -27,8 +27,6 @@ const defaultStyle = {
   height: 'auto',
   borderRadius: '0.25rem',
   fontSize: '0.875rem',
-  borderWidth: '0.063rem',
-  borderStyle: 'solid',
 }
 export const ButtonTheme = { 
   baseStyle: {
@@ -40,7 +38,6 @@ export const ButtonTheme = {
       ...defaultStyle,
       bg: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
       color: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
-      borderColor: 'transparent',
       _hover:{
        bg: props.colorMode === 'light' ? 'pri.02' : 'pri.02',
       },
@@ -59,7 +56,9 @@ export const ButtonTheme = {
       ...defaultStyle,
       bg: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
       color: props.colorMode === 'light' ? 'nl.03' : 'nl.03',
+      borderWidth: '0.063rem',
       borderColor: props.colorMode === 'light' ? 'nl.03' : 'nl.03',
+      borderStyle: 'solid',
       _hover:{
         bg: props.colorMode === 'light' ? 'nl.11' : 'nl.11',
       },
@@ -78,8 +77,7 @@ export const ButtonTheme = {
       ...getPaddings(props.size),
       ...defaultStyle,
       bg: 'nl.06',
-      borderColor: 'transparent',
-      color: props.colorMode === 'light' ? 'nl.02' : 'nl.02',
+      color: props.colorMode === 'light' ? 'pri.03' : 'pri.03',
       _hover:{
         color: props.colorMode === 'light' ? 'pri.02' : 'pri.02',
       },

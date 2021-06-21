@@ -70,3 +70,5 @@ export const Modal:React.FC<ModalProps> = ({
     </CModal>
   )
 }
+
+export default Modal;

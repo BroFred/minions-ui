@@ -8,7 +8,6 @@ import {
 } from "@chakra-ui/react"
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { repeat, reduce,range } from 'ramda';
-import { FaSyringe } from 'react-icons/fa';
 
 type textAlign = 'left' | 'right' | undefined;
 type size = 'sm' | 'mid' | 'lg' | undefined;
@@ -29,7 +28,7 @@ export interface ThSortProps extends TableText {
 }
 
 interface TableProps {
-    children : React.ReactNode;
+    children : ((arg: any)=>React.ReactNode)[];
     strip?: boolean;
     columns: any[];
     data: any[][];
