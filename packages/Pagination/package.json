@@ -6,8 +6,8 @@
   "homepage": "https://github.com/BroFred/minions-ui#readme",
   "license": "ISC",
   "private":"true",
-  "main": "lib/Table.js",
-  "types": "lib/Table.d.ts",
+  "main": "lib/Pagination.js",
+  "types": "lib/Pagination.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
