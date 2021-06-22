@@ -5,8 +5,8 @@
   "author": "xingyic <cxy1989112@gmail.com>",
   "homepage": "https://github.com/BroFred/minions-ui#readme",
   "license": "ISC",
-  "main": "lib/Main.js",
-  "types": "lib/Main.d.ts",
+  "main": "lib/main.js",
+  "types": "lib/main.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

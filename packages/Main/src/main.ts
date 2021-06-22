@@ -4,7 +4,7 @@ import { Table, TdPure, ThSort, ThPure } from '@minion-ui/table';
 import Modal from '@minion-ui/modal';
 import theme from '@minion-ui/theme';
 
-export default {
+export {
     Button,
     Pagination,
     Table, TdPure, ThSort, ThPure,
