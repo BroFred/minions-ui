@@ -19,11 +19,19 @@ const Template: Story<PaginationProps> = (args) => {
 
 export const PaginationMany = Template.bind({});
 PaginationMany.args = {
-    pageLength: 1000
+    pageLength: 1000,
+    page: {
+        currentPage: 1,
+        onPageChange: ()=>{},
+    }
 };
 
 
 export const PaginationMinial = Template.bind({});
 PaginationMinial.args = {
-    pageLength: 1
+    pageLength: 1,
+    page: {
+        currentPage: 1,
+        onPageChange: ()=>{},
+    }
 };

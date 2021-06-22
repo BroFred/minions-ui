@@ -10,7 +10,8 @@
   "private": true,
   "scripts": {
     "format": "prettier --write \"packages/**/*.{js,jsx,ts,tsx}\"",
-    "lint": "prettier --check \"packages/**/*.{js,jsx,ts,tsx}\""
+    "lint": "prettier --check \"packages/**/*.{js,jsx,ts,tsx}\"",
+    "storybook": "lerna run start & start-storybook -p 6006"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.13",

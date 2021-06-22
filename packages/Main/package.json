@@ -19,7 +19,7 @@
     "url": "git+https://github.com/BroFred/minions-ui.git"
   },
   "scripts": {
-    "start": "snowpack dev",
+    "start": "snowpack build --watch",
     "build": "snowpack build"
   },
   "bugs": {
