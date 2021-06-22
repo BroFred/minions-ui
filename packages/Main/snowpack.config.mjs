@@ -1,8 +1,7 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 export default {
   mount: {
-    public: { url: '/', static: true },
-    src: { url: '/dist' },
+    src: { url: '/' },
   },
   plugins: [
     [
@@ -10,12 +9,8 @@ export default {
       {
         patterns: [
           {
-            source: ['types/components/*', ],
-            destination: 'build/types/components',
-          },
-          {
-            source: ['types/*'],
-            destination: 'build/types',
+            source: ['src/*.d.ts'],
+            destination: 'lib',
           },
         ],
       },
@@ -35,16 +30,18 @@ export default {
     // {"match": "routes", "src": ".*", "dest": "/index.html"},
   ],
   optimize: {
+    // entrypoints:['Button.tsx']
     /* Example: Bundle your final build: */
     // "bundle": true,
   },
   packageOptions: {
-    external:['react', 'react-dom', '@chakra-ui/react', '@chakra-ui/icons']
+    external:['react', '@chakra-ui/react', '@chakra-ui/icons']
   },
   devOptions: {
     /* ... */
   },
   buildOptions: {
+    out:'lib'
     /* ... */
   },
 };
