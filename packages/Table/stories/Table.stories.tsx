@@ -4,6 +4,7 @@ import { Story, Meta } from '@storybook/react';
 import { map, range, addIndex, drop } from 'ramda';
 import {
     Grid,
+    Box
 } from "@chakra-ui/react"
 export default {
     title: 'Table',
@@ -83,7 +84,7 @@ const Template: Story<ThSortProps> = (args) => {
     const mapWithIndex = addIndex(map);
     return <Table strip columns={columns} data={data}>
         {
-            (cols) => map(({ columnName, column }) => <ThSort key={column} sort={[sort, setSort]} sortKey={column}>{columnName}</ThSort>, cols)
+            (cols) => map(({ columnName, column }) => <Box position="sticky"><ThSort key={column} sort={[sort, setSort]} sortKey={column}>{columnName}</ThSort></Box>, cols)
         }
         {
             (d) => mapWithIndex(
