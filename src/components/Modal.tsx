@@ -16,6 +16,7 @@ import { Button } from './Button';
 interface BtnProps {
   content: string;
   callBack?: any;
+  [propName: string]: any;
 }
 export interface ModalProps extends CModalProps {
   hasClose?: boolean;
@@ -36,7 +37,9 @@ export const Modal:React.FC<ModalProps> = ({
   confirmBtn,
   ...others
 }) => {
-  const { colorMode } = useColorMode()
+  const { colorMode } = useColorMode();
+  const { callBack: confirmCallBack, content: cBtnContent, ...confirmBtnOth } = confirmBtn;
+  const { callBack: cancelCallBack, content: cancelContent, ...cancelBtnOth } = cancelBtn;
   const getJustify = () => {
     return extraFootInfo ? 'space-between ': 'flex-end';
   }
@@ -62,8 +65,8 @@ export const Modal:React.FC<ModalProps> = ({
         <ModalFooter borderRadius='0.5rem' bg={`${colorMode === 'light' ? 'nl.10' : 'nl.10'}`} mt='1rem' px='2rem' py='0.75rem' justifyContent={getJustify()}>
           {extraFootInfo}
           <div>
-            {!!cancelBtn && <Button mode='secondary' onClick={cancelBtn.callBack} mr='0.5rem'>{cancelBtn.content}</Button>}
-            <Button onClick={confirmBtn.callBack}>{confirmBtn.content}</Button>
+            {!!cancelBtn && <Button mode='secondary' onClick={cancelCallBack} mr='0.5rem' {...cancelBtnOth}>{cancelContent}</Button>}
+            <Button onClick={confirmCallBack} {...confirmBtnOth}>{cBtnContent}</Button>
           </div>
         </ModalFooter>
       </ModalContent>
