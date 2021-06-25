@@ -11,11 +11,11 @@ import
   ModalFooter,
   useColorMode,
 } from '@chakra-ui/react';
-import Button from '@minion-ui/button';
+import Button, { ButtonProps } from '@minion-ui/button';
 import {map} from 'ramda';
 console.log(map)
 
-interface BtnProps {
+interface BtnProps extends ButtonProps {
   content: string;
   callBack?: any;
 }
@@ -38,7 +38,9 @@ export const Modal:React.FC<ModalProps> = ({
   confirmBtn,
   ...others
 }) => {
-  const { colorMode } = useColorMode()
+  const { colorMode } = useColorMode();
+  const {content: confirmContent, callBack: confirmCallBack, ...otherConfirm} = confirmBtn;
+  const {content: cancelContent, callBack: cancelCallBack, ...otherCancelBtn} = cancelBtn;
   const getJustify = () => {
     return extraFootInfo ? 'space-between ': 'flex-end';
   }
@@ -64,8 +66,8 @@ export const Modal:React.FC<ModalProps> = ({
         <ModalFooter borderRadius='0.5rem' bg={`${colorMode === 'light' ? 'nl.10' : 'nl.10'}`} mt='1rem' px='2rem' py='0.75rem' justifyContent={getJustify()}>
           {extraFootInfo}
           <div>
-            {!!cancelBtn && <Button mode='secondary' onClick={cancelBtn.callBack} mr='0.5rem'>{cancelBtn.content}</Button>}
-            <Button onClick={confirmBtn.callBack}>{confirmBtn.content}</Button>
+            {!!cancelBtn && <Button mode='secondary' onClick={cancelCallBack} mr='0.5rem' {...otherConfirm}>{cancelContent}</Button>}
+            <Button onClick={confirmCallBack} {...otherCancelBtn}>{confirmContent}</Button>
           </div>
         </ModalFooter>
       </ModalContent>
