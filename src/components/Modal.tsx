@@ -11,12 +11,11 @@ import
   ModalFooter,
   useColorMode,
 } from '@chakra-ui/react';
-import { Button } from './Button';
+import { Button, ButtonProps } from './Button';
 
-interface BtnProps {
+interface BtnProps extends ButtonProps {
   content: string;
   callBack?: any;
-  [propName: string]: any;
 }
 export interface ModalProps extends CModalProps {
   hasClose?: boolean;
