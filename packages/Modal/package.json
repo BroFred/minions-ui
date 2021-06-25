@@ -1,26 +1,40 @@
 {
-  "name": "minion-ui",
-  "version": "0.0.4",
-  "description": "",
-  "main": "packages/Main/lib/main.js",
-  "types": "packages/Main/lib/main.d.ts",
-  "workspaces": [
-    "packages/*"
+  "name": "@minion-ui/modal",
+  "version": "0.0.1",
+  "description": "modal component",
+  "author": "liuyaqun <1614471198@qq.com>",
+  "homepage": "https://github.com/BroFred/minions-ui#readme",
+  "license": "ISC",
+  "main": "lib/Modal.js",
+  "types": "lib/Modal.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
   ],
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BroFred/minions-ui.git"
+  },
   "scripts": {
-    "format": "prettier --write \"packages/**/*.{js,jsx,ts,tsx}\"",
-    "lint": "prettier --check \"packages/**/*.{js,jsx,ts,tsx}\"",
-    "storybook": "start-storybook -p 6006"
+    "start": "snowpack dev",
+    "build": "snowpack build",
+    "types": "tsc src/Modal.tsx  --declaration --emitDeclarationOnly --outDir src"
+  },
+  "bugs": {
+    "url": "https://github.com/BroFred/minions-ui/issues"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.13",
-    "@chakra-ui/react": "^1.6.3",
+    "@chakra-ui/react": "^1.6.4",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
-    "downshift": "^6.1.3",
+    "@minion-ui/button": "^0.0.1",
+    "@types/ramda": "^0.27.40",
     "framer-motion": "^4.1.17",
-    "ramda": "^0.21.0",
+    "ramda": "^0.27.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
@@ -32,10 +46,6 @@
     "@snowpack/plugin-react-refresh": "^2.5.0",
     "@snowpack/plugin-typescript": "^1.2.1",
     "@snowpack/web-test-runner-plugin": "^0.2.2",
-    "@storybook/addon-actions": "^6.2.9",
-    "@storybook/addon-essentials": "^6.2.9",
-    "@storybook/addon-links": "^6.2.9",
-    "@storybook/react": "^6.2.9",
     "@testing-library/react": "^11.2.6",
     "@types/chai": "^4.2.17",
     "@types/mocha": "^8.2.2",
