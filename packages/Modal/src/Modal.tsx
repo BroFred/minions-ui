@@ -40,7 +40,7 @@ export const Modal:React.FC<ModalProps> = ({
 }) => {
   const { colorMode } = useColorMode();
   const {content: confirmContent, callBack: confirmCallBack, ...otherConfirm} = confirmBtn;
-  const {content: cancelContent, callBack: cancelCallBack, ...otherCancelBtn} = cancelBtn;
+  const {content: cancelContent, callBack: cancelCallBack, ...otherCancelBtn} = cancelBtn || {};
   const getJustify = () => {
     return extraFootInfo ? 'space-between ': 'flex-end';
   }
@@ -66,8 +66,8 @@ export const Modal:React.FC<ModalProps> = ({
         <ModalFooter borderRadius='0.5rem' bg={`${colorMode === 'light' ? 'nl.10' : 'nl.10'}`} mt='1rem' px='2rem' py='0.75rem' justifyContent={getJustify()}>
           {extraFootInfo}
           <div>
-            {!!cancelBtn && <Button mode='secondary' onClick={cancelCallBack} mr='0.5rem' {...otherConfirm}>{cancelContent}</Button>}
-            <Button onClick={confirmCallBack} {...otherCancelBtn}>{confirmContent}</Button>
+            {!!cancelContent && <Button mode='secondary' onClick={cancelCallBack} mr='0.5rem' {...otherCancelBtn}>{cancelContent}</Button>}
+            <Button onClick={confirmCallBack} {...otherConfirm}>{confirmContent}</Button>
           </div>
         </ModalFooter>
       </ModalContent>
