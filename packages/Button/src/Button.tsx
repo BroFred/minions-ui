@@ -79,7 +79,7 @@ export const ButtonTheme = {
       ...getPaddings(props.size),
       ...defaultStyle,
       bg: 'nl.06',
-      color: props.colorMode === 'light' ? 'pri.03' : 'pri.03',
+      color: props.colorMode === 'light' ? 'nl.02' : 'nl.02',
       _hover:{
         color: props.colorMode === 'light' ? 'pri.02' : 'pri.02',
       },
