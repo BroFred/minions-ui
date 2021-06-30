@@ -55,7 +55,7 @@ export const Modal:React.FC<ModalProps> = ({
     }
   }
   return (
-    <CModal isOpen={isOpen} {...others} scrollBehavior={'inside'} >
+    <CModal isOpen={isOpen} {...others} scrollBehavior={'inside'} trapFocus={false} >
       <ModalOverlay />
       <ModalContent boxShadow='16'>
         <ModalHeader px='2rem' py='1rem' {...getSpecialCSS()}>{title}</ModalHeader>
