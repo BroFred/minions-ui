@@ -55,7 +55,7 @@ const getH = (size: size): number => {
     }
 }
 export const CellContainer = ({ children }: { children: React.ReactNode }): JSX.Element => {
-    return <Box textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="4" maxW={96} minW={12}>{children}</Box>;
+    return <Box textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="4">{children}</Box>;
 };
 
 export const ThRow = ({ children }: { children: React.ReactNode[] }) => {
@@ -108,7 +108,7 @@ export const TdPure = ({ children, size, textAlign }: TableText) => {
 
 export const Table = ({ children, strip=false, columns=[], data=[], template='auto' }:TableProps): JSX.Element => {
     const columnLen = columns.length;
-    let girdTemplate = repeat(columnLen, minmax(0, '1fr'));
+    let girdTemplate = `repeat(${columnLen}, minmax(0, 1fr))`;
     if (template === 'even') {
         const tempWidth = 100 / columnLen
         girdTemplate =  repeat(`${tempWidth}%`, columnLen).join(' ');
