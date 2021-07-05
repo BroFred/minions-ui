@@ -32,6 +32,7 @@ interface TableProps {
     strip?: boolean;
     columns: any[];
     data: any[][];
+    template: 'auto' | 'even' | Array<string>
 }
 
 type stripStyle = {
@@ -105,9 +106,16 @@ export const TdPure = ({ children, size, textAlign }: TableText) => {
 
 
 
-export const Table = ({ children, strip=false, columns=[], data=[] }:TableProps): JSX.Element => {
+export const Table = ({ children, strip=false, columns=[], data=[], template='auto' }:TableProps): JSX.Element => {
     const columnLen = columns.length;
-    const girdTemplate = repeat('1fr', columnLen).join(" ");
+    let girdTemplate = repeat(columnLen, minmax(0, '1fr'));
+    if (template === 'even') {
+        const tempWidth = 100 / columnLen
+        girdTemplate =  repeat(`${tempWidth}%`, columnLen).join(' ');
+    }
+    if (Array.isArray(template)) {
+        girdTemplate = template.join(' ')
+    }
     const stripStyle = strip ? reduce((aggregate:stripStyle, offset:number):stripStyle =>{
         return {
             ...aggregate,
