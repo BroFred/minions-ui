@@ -1,4 +1,4 @@
-import Datepicker, { DataContainerProps, ShowYearAndMonth, GoToMonthYear, RangeSelector } from '../src/Datepicker';
+import Datepicker, { DataContainerProps, ShowYearAndMonth, GoToMonthYear, RangeSelector, TimePicker, RangeSelectorProps, TimePickerProps } from '../src/Datepicker';
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react';
 import {
@@ -23,7 +23,7 @@ Basic.args = {
     selectedDate: '1995-10-01'
 };
 
-const RangeTemplate: Story<any> = () => {
+const RangeTemplate: Story<RangeSelectorProps> = () => {
     const [selectedStartDate, onSelectedStartDateChange] = useState('1995-10-15');
     const [selectedEndDate, onSelectedEndDateChange] = useState('1995-10-31');
     return <Flex justifyContent="space-around"><RangeSelector startDate={{
@@ -34,3 +34,15 @@ const RangeTemplate: Story<any> = () => {
 }
 
 export const BasicRange = RangeTemplate.bind({});
+
+const TimePickerTemplate: Story<TimePickerProps> = ()=>{
+    const [selectedTimeStart, onSelectedTimeChangeStart] = useState("9:10:10");
+    const [selectedTimeEnd, onSelectedTimeChangeEnd] = useState("20:10:10");
+
+   return <VStack>
+       <TimePicker time={{selectedTime:selectedTimeStart, onSelectedTimeChange:onSelectedTimeChangeStart}} rangeEndTime={selectedTimeEnd}/>
+       <TimePicker time={{selectedTime:selectedTimeEnd, onSelectedTimeChange:onSelectedTimeChangeEnd}} rangeStartTime={selectedTimeStart}/>
+   </VStack>
+}
+
+export const BasicTmplate= TimePickerTemplate.bind({});
