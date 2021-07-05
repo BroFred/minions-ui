@@ -12,8 +12,9 @@ import
   useColorMode,
 } from '@chakra-ui/react';
 import Button, { ButtonProps } from '@minion-ui/button';
-import {map} from 'ramda';
-console.log(map)
+import { always } from 'ramda';
+
+always(undefined);
 
 interface BtnProps extends ButtonProps {
   content: string;

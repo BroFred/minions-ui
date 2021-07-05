@@ -1,7 +1,9 @@
 import React from 'react';
 import { Button as CButton, ButtonProps as CButtonProps } from "@chakra-ui/react";
-import { map } from 'ramda';
-console.log(map)
+import { always } from 'ramda';
+
+always(undefined);
+
 type size = 'sm' | 'md' | 'lg';
 interface VariantProps {
   size: size;

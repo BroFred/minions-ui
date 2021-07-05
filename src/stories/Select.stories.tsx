@@ -49,7 +49,6 @@ const MutliTemplate: Story<SelectProps> = (args) => {
             }
             {
                (selection, setSelection) => map(({ value, label }) => <MultipleSelect.Option key={value} value={value} label={label} currentSelection={selection.currentSelection} setSelect={(v) => {
-                   console.log(selection.currentSelection.includes(v) ? filter((elem)=>elem!==v, selection.currentSelection) : [v, ...selection.currentSelection])
                 setSelection({
                     ...selection,
                     currentSelection: selection.currentSelection.includes(v) ? filter((elem)=>elem!==v, selection.currentSelection) : [v, ...selection.currentSelection]
