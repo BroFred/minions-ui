@@ -4,10 +4,10 @@ import {
     Box,
     IconButton,
     GridItem,
-    Grid
+    Grid,
 } from "@chakra-ui/react"
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
-import { repeat, reduce,range } from 'ramda';
+import { reduce, range, sum } from 'ramda';
 
 type textAlign = 'left' | 'right' | undefined;
 type size = 'sm' | 'mid' | 'lg' | undefined;
@@ -28,15 +28,15 @@ export interface ThSortProps extends TableText {
 }
 
 interface TableProps {
-    children : ((arg: any)=>React.ReactNode)[];
+    children: ((arg: any) => React.ReactNode)[];
     strip?: boolean;
     columns: any[];
     data: any[][];
-    template: 'auto' | 'even' | Array<string>
+    template: 'auto' | 'even' | Array<number>
 }
 
 type stripStyle = {
-    [key:string]: {
+    [key: string]: {
         background: string;
     } | {};
 }
@@ -54,8 +54,8 @@ const getH = (size: size): number => {
             return 10;
     }
 }
-export const CellContainer = ({ children }: { children: React.ReactNode }): JSX.Element => {
-    return <Box textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="4">{children}</Box>;
+export const CellContainer = ({ children, textAlign = "left" }: { children: React.ReactNode, textAlign: textAlign }): JSX.Element => {
+    return <Box textAlign={textAlign} textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="4" minW="32" maxW="96">{children}</Box>;
 };
 
 export const ThRow = ({ children }: { children: React.ReactNode[] }) => {
@@ -66,7 +66,7 @@ export const ThPure = ({ children, size, textAlign }: TableText): JSX.Element =>
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
     return <Flex alignItems="center" bg={'nl.08'} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor="nl.05">
-        <CellContainer>{children}</CellContainer>
+        <CellContainer textAlign={textAlign}>{children}</CellContainer>
     </Flex>
 }
 
@@ -82,7 +82,7 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
     }
     const h = getH(size);
     return <Flex alignItems="center" bg={'nl.08'} outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}>
-        <CellContainer>{children}</CellContainer>
+        <CellContainer textAlign={textAlign}>{children}</CellContainer>
         <Flex flexDirection="column">
             <IconButton onClick={() => setIsSortedDesc({
                 sortKey,
@@ -101,31 +101,34 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
 export const TdPure = ({ children, size, textAlign }: TableText) => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
-    return <GridItem bg="white"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer>{children}</CellContainer></Flex></GridItem>
+    return <GridItem bg="white"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
 }
 
 
 
-export const Table = ({ children, strip=false, columns=[], data=[], template='auto' }:TableProps): JSX.Element => {
+export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto' }: TableProps): JSX.Element => {
     const columnLen = columns.length;
-    let girdTemplate = `repeat(${columnLen}, minmax(0, 1fr))`;
+    let girdTemplate = `repeat(${columnLen}, 1fr)`;
+    let width;
     if (template === 'even') {
-        const tempWidth = 100 / columnLen
-        girdTemplate =  repeat(`${tempWidth}%`, columnLen).join(' ');
+        girdTemplate = `repeat(${columnLen}, minmax(13rem, 1fr))`;
     }
     if (Array.isArray(template)) {
-        girdTemplate = template.join(' ')
+        const total = sum(template);
+        const min = Math.min(...template);
+        width = Math.ceil(13/min * total);
+        girdTemplate = template.map((v)=>`${Math.floor(v/total*100)}%`).join(' ');
     }
-    const stripStyle = strip ? reduce((aggregate:stripStyle, offset:number):stripStyle =>{
+    const stripStyle = strip ? reduce((aggregate: stripStyle, offset: number): stripStyle => {
         return {
             ...aggregate,
-            [`*:nth-of-type(${2*columnLen}n - ${offset})`]: {
+            [`*:nth-of-type(${2 * columnLen}n - ${offset})`]: {
                 background: 'nl.09',
             }
         }
     },
-    {},range(0,columnLen)):{};
-    return <Grid templateColumns={girdTemplate} sx={stripStyle}>
+        {}, range(0, columnLen)) : {};
+    return <Grid templateColumns={girdTemplate} sx={stripStyle} minWidth={`${width}rem`}>
         {children[0](columns)}
         {children[1](data)}
     </Grid>
