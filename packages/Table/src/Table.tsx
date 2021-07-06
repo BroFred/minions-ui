@@ -2,7 +2,6 @@ import React from 'react';
 import {
     Flex,
     Box,
-    IconButton,
     GridItem,
     Grid,
 } from "@chakra-ui/react"
@@ -55,7 +54,7 @@ const getH = (size: size): number => {
     }
 }
 export const CellContainer = ({ children, textAlign = "left" }: { children: React.ReactNode, textAlign: textAlign }): JSX.Element => {
-    return <Box textAlign={textAlign} textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="4" minW="12" maxW="96">{children}</Box>;
+    return <Box textAlign={textAlign} textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="2" minW="12" maxW="96">{children}</Box>;
 };
 
 export const ThRow = ({ children }: { children: React.ReactNode[] }) => {
@@ -83,17 +82,31 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
     const h = getH(size);
     return <Flex alignItems="center" bg={'nl.08'} outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}>
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
-        <Flex flexDirection="column">
-            <IconButton onClick={() => setIsSortedDesc({
+        <Flex width="4" mx="2" flexDirection="column">
+            <Box onClick={() => setIsSortedDesc({
                 sortKey,
                 isSortedDesc: setSorted(false)
-            })} borderRadius="full" aria-label="table sort" icon={<ChevronUpIcon />} variant="ghost" h={2} w={2} color={(isSelfSorting && isSortedDesc === false) ? 'pri.01' : 'nl.01'} />
-            <IconButton onClick={() => setIsSortedDesc(
+            })}  
+            borderRadius="full"
+            _hover={{
+                bg:'nl.05'
+            }}
+            aria-label="table sort" h={4} w={4} lineHeight="0" color={(isSelfSorting && isSortedDesc === false) ? 'pri.01' : 'nl.01'} >
+                <ChevronUpIcon  h={4} w={4}/>
+            </Box>
+            <Box onClick={() => setIsSortedDesc(
                 {
                     sortKey,
                     isSortedDesc: setSorted(true)
                 }
-            )} borderRadius="full" aria-label="table sort" icon={<ChevronDownIcon />} variant="ghost" h={2} w={2} color={(isSelfSorting && isSortedDesc === true) ? 'pri.01' : 'nl.01'} />
+            )} 
+            borderRadius="full"
+            _hover={{
+                bg:'nl.05'
+            }}
+            aria-label="table sort" h={4} w={4} lineHeight="0" color={(isSelfSorting && isSortedDesc === true) ? 'pri.01' : 'nl.01'}>
+                <ChevronDownIcon  h={4} w={4}/>
+            </Box>
         </Flex>
     </Flex>
 }
@@ -111,12 +124,12 @@ export const Table = ({ children, strip = false, columns = [], data = [], templa
     let girdTemplate = `repeat(${columnLen}, 1fr)`;
     let width;
     if (template === 'even') {
-        girdTemplate = `repeat(${columnLen}, minmax(4rem, 1fr))`;
+        girdTemplate = `repeat(${columnLen}, minmax(6rem, 1fr))`;
     }
     if (Array.isArray(template)) {
         const total = sum(template);
         const min = Math.min(...template);
-        width = Math.ceil(4/min * total);
+        width = Math.ceil(6/min * total);
         girdTemplate = template.map((v)=>`${Math.floor(v/total*100)}%`).join(' ');
     }
     const stripStyle = strip ? reduce((aggregate: stripStyle, offset: number): stripStyle => {
