@@ -7,6 +7,7 @@
   "workspaces": [
     "packages/*"
   ],
+  "private": "true",
   "scripts": {
     "format": "prettier --write \"packages/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"packages/**/*.{js,jsx,ts,tsx}\"",
