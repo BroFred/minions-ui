@@ -19,8 +19,7 @@
   },
   "scripts": {
     "start": "snowpack build --watch",
-    "build": "snowpack build",
-    "types": "tsc src/Theme.ts  --declaration --emitDeclarationOnly --outDir src"
+    "build": "snowpack build"
   },
   "bugs": {
     "url": "https://github.com/BroFred/minions-ui/issues"
