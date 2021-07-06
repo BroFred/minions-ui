@@ -4,11 +4,12 @@ import {
     NumberInputStepper,
     NumberIncrementStepper,
     NumberDecrementStepper,
+    Box,
 } from '@chakra-ui/react';
 import { map, range } from 'ramda';
 import dayjs from 'dayjs';
 import Button from '@minion-ui/button'
-import { ArrowRightIcon, ArrowLeftIcon, ChevronRightIcon, ChevronLeftIcon } from '@chakra-ui/icons';
+import { ArrowRightIcon, ArrowLeftIcon, ChevronRightIcon, ChevronLeftIcon, AddIcon, MinusIcon } from '@chakra-ui/icons';
 import isBetween from 'dayjs/plugin/isBetween';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -152,15 +153,15 @@ export const RangeSelector = ({ startDate, endDate }: RangeSelectorProps): JSX.E
 }
 
 export interface TimePickerProps {
-    time:{
+    time: {
         selectedTime: string;
-        onSelectedTimeChange: (param:string)=>void;
+        onSelectedTimeChange: (param: string) => void;
     }
     rangeStartTime?: string;
     rangeEndTime?: string;
 }
 
-export const TimePicker = ({ time: { selectedTime, onSelectedTimeChange }, rangeStartTime = "0:0:0", rangeEndTime= "23:59:59" }:TimePickerProps):JSX.Element => {
+export const TimePicker = ({ time: { selectedTime, onSelectedTimeChange }, rangeStartTime = "0:0:0", rangeEndTime = "23:59:59" }: TimePickerProps): JSX.Element => {
 
     const preTime = dayjs(rangeStartTime, "H:m:s");
     const nextTime = dayjs(rangeEndTime, "H:m:s");
@@ -180,31 +181,37 @@ export const TimePicker = ({ time: { selectedTime, onSelectedTimeChange }, range
     const minS = time.subtract(1, 'second').isBetween(preTime, nextTime) ? time.subtract(1, 'second').second() : s;
 
 
-    const onTimeChange = (t) => {
+    const onTimeChange = (t: { h?: string, m?: string, s?: string }) => {
         onSelectedTimeChange(`${t.h || h}:${t.m || m}:${t.s || s}`)
     }
+    const numberInputStepperStyle = {
+        _hover: {
+            opacity: 1
+        },
+        opacity: 0.1
+    }
     return <HStack>
-        <NumberInput value={h} min={minH} max={maxH} onChange={(v) => onTimeChange({ h: v })} >
+        <NumberInput value={h} min={minH} max={maxH} onChange={(v) => onTimeChange({ h: v })} width="5rem">
             <NumberInputField />
-            <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
+            <NumberInputStepper {...numberInputStepperStyle}>
+                <NumberIncrementStepper><AddIcon fontSize="xx-small" /></NumberIncrementStepper>
+                <NumberDecrementStepper><MinusIcon fontSize="xx-small" /></NumberDecrementStepper>
             </NumberInputStepper>
         </NumberInput>
-        <Text>:</Text>
-        <NumberInput value={m} min={minM} max={maxM} onChange={(v) => onTimeChange({ m: v })} >
+        <Box>:</Box>
+        <NumberInput value={m} min={minM} max={maxM} onChange={(v) => onTimeChange({ m: v })} width="5rem">
             <NumberInputField />
-            <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
+            <NumberInputStepper {...numberInputStepperStyle}>
+                <NumberIncrementStepper><AddIcon fontSize="xx-small" /></NumberIncrementStepper>
+                <NumberDecrementStepper><MinusIcon fontSize="xx-small" /></NumberDecrementStepper>
             </NumberInputStepper>
         </NumberInput>
-        <Text>:</Text>
-        <NumberInput value={s} min={minS} max={maxS} onChange={(v) => onTimeChange({ s: v })} >
+        <Box>:</Box>
+        <NumberInput value={s} min={minS} max={maxS} onChange={(v) => onTimeChange({ s: v })} width="5rem">
             <NumberInputField />
-            <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
+            <NumberInputStepper {...numberInputStepperStyle}>
+                <NumberIncrementStepper><AddIcon fontSize="xx-small" /></NumberIncrementStepper>
+                <NumberDecrementStepper><MinusIcon fontSize="xx-small" /></NumberDecrementStepper>
             </NumberInputStepper>
         </NumberInput>
     </HStack>
