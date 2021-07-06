@@ -55,7 +55,7 @@ const getH = (size: size): number => {
     }
 }
 export const CellContainer = ({ children, textAlign = "left" }: { children: React.ReactNode, textAlign: textAlign }): JSX.Element => {
-    return <Box textAlign={textAlign} textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="4" minW="32" maxW="96">{children}</Box>;
+    return <Box textAlign={textAlign} textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="4" minW="12" maxW="96">{children}</Box>;
 };
 
 export const ThRow = ({ children }: { children: React.ReactNode[] }) => {
@@ -111,12 +111,12 @@ export const Table = ({ children, strip = false, columns = [], data = [], templa
     let girdTemplate = `repeat(${columnLen}, 1fr)`;
     let width;
     if (template === 'even') {
-        girdTemplate = `repeat(${columnLen}, minmax(13rem, 1fr))`;
+        girdTemplate = `repeat(${columnLen}, minmax(4rem, 1fr))`;
     }
     if (Array.isArray(template)) {
         const total = sum(template);
         const min = Math.min(...template);
-        width = Math.ceil(13/min * total);
+        width = Math.ceil(4/min * total);
         girdTemplate = template.map((v)=>`${Math.floor(v/total*100)}%`).join(' ');
     }
     const stripStyle = strip ? reduce((aggregate: stripStyle, offset: number): stripStyle => {
