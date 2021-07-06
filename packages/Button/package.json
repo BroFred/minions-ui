@@ -22,7 +22,7 @@
   "scripts": {
     "start": "snowpack build --watch",
     "build": "snowpack build",
-    "types": "tsc src/Button.tsx  --declaration --emitDeclarationOnly --outDir src"
+    "types": "tsc src/Button.tsx --declaration --emitDeclarationOnly --outDir src"
   },
   "bugs": {
     "url": "https://github.com/BroFred/minions-ui/issues"

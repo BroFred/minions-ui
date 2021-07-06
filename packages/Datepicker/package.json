@@ -18,7 +18,9 @@
     "url": "git+https://github.com/BroFred/minions-ui.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "start": "snowpack build --watch",
+    "build": "snowpack build",
+    "types": "tsc src/Datepicker.tsx  --declaration --emitDeclarationOnly --outDir src"
   },
   "bugs": {
     "url": "https://github.com/BroFred/minions-ui/issues"
