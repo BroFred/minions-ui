@@ -6,7 +6,7 @@ import {
     Grid,
 } from "@chakra-ui/react"
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
-import { reduce, range, sum } from 'ramda';
+import { reduce, range, sum, repeat } from 'ramda';
 
 type textAlign = 'left' | 'right' | undefined;
 type size = 'sm' | 'mid' | 'lg' | undefined;
@@ -32,6 +32,7 @@ interface TableProps {
     columns: any[];
     data: any[][];
     template: 'auto' | 'even' | Array<number>
+    enableCollapse: boolean;
 }
 
 type stripStyle = {
@@ -64,7 +65,7 @@ export const ThRow = ({ children }: { children: React.ReactNode[] }) => {
 export const ThPure = ({ children, size, textAlign }: TableText): JSX.Element => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
-    return <Flex alignItems="center" bg={'nl.08'} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor="nl.05">
+    return <Flex className="cell" alignItems="center" bg={'nl.08'} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor="nl.05">
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
     </Flex>
 }
@@ -80,7 +81,7 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
         return isSortedDesc === value ? undefined : value;
     }
     const h = getH(size);
-    return <Flex alignItems="center" bg={'nl.08'} outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}>
+    return <Flex className="cell" alignItems="center" bg={'nl.08'} outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}>
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
         <Flex width="4" mx="2" flexDirection="column">
             <Box onClick={() => setIsSortedDesc({
@@ -114,13 +115,22 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
 export const TdPure = ({ children, size, textAlign }: TableText) => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
-    return <GridItem bg="white"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
+    return <GridItem bg="white" className="cell"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
 }
 
+export const TdCollapsed = ({ children, row, size } )=> {
+    const h = getH(size);
+    const len = row.length;
+    return (<>
+    {
+       [<GridItem bg="white" gridColumn="1/-1"><Box outline="1px solid" outlineColor="nl.05">{children(row)}</Box></GridItem >]
+    }
+    </>);
+}
 
-
-export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto' }: TableProps): JSX.Element => {
-    const columnLen = columns.length;
+export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto' , enableCollapse=false}: TableProps): JSX.Element => {
+    const compensation = enableCollapse ? 1 : 0;
+    const columnLen = columns.length + compensation;
     let girdTemplate = `repeat(${columnLen}, 1fr)`;
     let width;
     if (template === 'even') {
@@ -135,7 +145,7 @@ export const Table = ({ children, strip = false, columns = [], data = [], templa
     const stripStyle = strip ? reduce((aggregate: stripStyle, offset: number): stripStyle => {
         return {
             ...aggregate,
-            [`*:nth-of-type(${2 * columnLen}n - ${offset})`]: {
+            [`*:nth-of-type(${2 * columnLen}n - ${offset + compensation})`]: {
                 background: 'nl.09',
             }
         }

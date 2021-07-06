@@ -1,4 +1,4 @@
-import { ThSort, TdPure, ThSortProps, ThRow, Table, ThPure } from '../src/Table';
+import { ThSort, TdPure, ThSortProps, ThRow, Table, ThPure, TdCollapsed } from '../src/Table';
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react';
 import { map, range, addIndex, drop } from 'ramda';
@@ -140,13 +140,17 @@ const CustomizedTemplate: Story<ThSortProps> = (args) => {
     const data = [range(1, 4), 
         range(1, 4), range(1, 4)];
     const mapWithIndex = addIndex(map);
-    return <Table strip columns={columns} data={data} template={[1, 1, 2]}>
+    return <Table strip columns={columns} data={data} template={[1, 1, 2]} enableCollapse={true}>
         {
             (cols) => map(({ columnName, column }) => <Box position="sticky"><ThPure textAlign="right" key={column}>{columnName}</ThPure></Box>, cols)
         }
         {
             (d) => mapWithIndex(
-                (val, index) => mapWithIndex((val1, index1) => <TdPure  key={`${index}_${index1}`} >{val1}</TdPure>, val),
+                (val, index) => [...mapWithIndex((val1, index1) => <TdPure  key={`${index}_${index1}`} >{val1}</TdPure>, val), <TdCollapsed row={val}>
+                    {
+                        (row)=> <div>{row.join('-_____________________________')}</div>
+                    }
+                </TdCollapsed>],
                 d)
         }
     </Table>
