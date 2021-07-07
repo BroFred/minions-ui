@@ -15,13 +15,21 @@ export interface ThSortProps extends TableText {
     sort: [sort, React.Dispatch<React.SetStateAction<sort>>];
 }
 interface TableProps {
-    children: ((arg: any) => React.ReactNode)[];
+    children: ((arg: any) => React.ReactNode[])[];
     strip?: boolean;
     columns: any[];
     data: any[][];
+    template: 'auto' | 'even' | Array<number>;
+    enableCollapse: boolean;
+    showRange: number;
 }
-export declare const CellContainer: ({ children }: {
+interface TdCollapsedProps {
+    children: (arg: any) => React.ReactNode[];
+    row: unknown[];
+}
+export declare const CellContainer: ({ children, textAlign }: {
     children: any;
+    textAlign: textAlign;
 }) => JSX.Element;
 export declare const ThRow: ({ children }: {
     children: React.ReactNode[];
@@ -29,5 +37,6 @@ export declare const ThRow: ({ children }: {
 export declare const ThPure: ({ children, size, textAlign }: TableText) => JSX.Element;
 export declare const ThSort: ({ children, sort, size, textAlign, sortKey }: ThSortProps) => JSX.Element;
 export declare const TdPure: ({ children, size, textAlign }: TableText) => JSX.Element;
-export declare const Table: ({ children, strip, columns, data }: TableProps) => JSX.Element;
+export declare const TdCollapsed: ({ children, row }: TdCollapsedProps) => JSX.Element;
+export declare const Table: ({ children, strip, columns, data, template, enableCollapse, showRange }: TableProps) => JSX.Element;
 export {};
