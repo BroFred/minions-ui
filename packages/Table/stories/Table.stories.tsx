@@ -146,7 +146,7 @@ const CustomizedTemplate: Story<ThSortProps> = (args) => {
         }
         {
             (d) => mapWithIndex(
-                (val, index) => [...mapWithIndex((val1, index1) => <TdPure  key={`${index}_${index1}`} >{val1}</TdPure>, val), <TdCollapsed row={val}>
+                (val, index) => [...mapWithIndex((val1, index1) => <TdPure  key={`${index}_${index1}`} >{val1}</TdPure>, val), <TdCollapsed key={`${index}-collapsed`} row={val}>
                     {
                         (row)=> <div>{row.join('-_____________________________')}</div>
                     }

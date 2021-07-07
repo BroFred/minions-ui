@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children, useMemo } from 'react';
 import {
     Flex,
     Box,
@@ -6,7 +6,7 @@ import {
     Grid,
 } from "@chakra-ui/react"
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
-import { reduce, range, sum, repeat } from 'ramda';
+import { reduce, range, sum, take } from 'ramda';
 
 type textAlign = 'left' | 'right' | undefined;
 type size = 'sm' | 'mid' | 'lg' | undefined;
@@ -27,12 +27,13 @@ export interface ThSortProps extends TableText {
 }
 
 interface TableProps {
-    children: ((arg: any) => React.ReactNode)[];
+    children: ((arg: any) => React.ReactNode[])[];
     strip?: boolean;
     columns: any[];
     data: any[][];
     template: 'auto' | 'even' | Array<number>
     enableCollapse: boolean;
+    showRange: number;
 }
 
 type stripStyle = {
@@ -40,7 +41,10 @@ type stripStyle = {
         background: string;
     } | {};
 }
-
+interface TdCollapsedProps {
+    children: (arg: any) => React.ReactNode[];
+    row: unknown[];
+}
 const getTextAlign = (textAlign: textAlign): string => textAlign === 'right' ? 'flex-end' : 'space-between';
 const getH = (size: size): number => {
     switch (size) {
@@ -87,26 +91,26 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
             <Box onClick={() => setIsSortedDesc({
                 sortKey,
                 isSortedDesc: setSorted(false)
-            })}  
-            borderRadius="full"
-            _hover={{
-                bg:'nl.05'
-            }}
-            aria-label="table sort" h={4} w={4} lineHeight="0" color={(isSelfSorting && isSortedDesc === false) ? 'pri.01' : 'nl.01'} >
-                <ChevronUpIcon  h={4} w={4}/>
+            })}
+                borderRadius="full"
+                _hover={{
+                    bg: 'nl.05'
+                }}
+                aria-label="table sort" h={4} w={4} lineHeight="0" color={(isSelfSorting && isSortedDesc === false) ? 'pri.01' : 'nl.01'} >
+                <ChevronUpIcon h={4} w={4} />
             </Box>
             <Box onClick={() => setIsSortedDesc(
                 {
                     sortKey,
                     isSortedDesc: setSorted(true)
                 }
-            )} 
-            borderRadius="full"
-            _hover={{
-                bg:'nl.05'
-            }}
-            aria-label="table sort" h={4} w={4} lineHeight="0" color={(isSelfSorting && isSortedDesc === true) ? 'pri.01' : 'nl.01'}>
-                <ChevronDownIcon  h={4} w={4}/>
+            )}
+                borderRadius="full"
+                _hover={{
+                    bg: 'nl.05'
+                }}
+                aria-label="table sort" h={4} w={4} lineHeight="0" color={(isSelfSorting && isSortedDesc === true) ? 'pri.01' : 'nl.01'}>
+                <ChevronDownIcon h={4} w={4} />
             </Box>
         </Flex>
     </Flex>
@@ -118,17 +122,15 @@ export const TdPure = ({ children, size, textAlign }: TableText) => {
     return <GridItem bg="white" className="cell"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
 }
 
-export const TdCollapsed = ({ children, row, size } )=> {
-    const h = getH(size);
-    const len = row.length;
+export const TdCollapsed = ({ children, row }:TdCollapsedProps) => {
     return (<>
-    {
-       [<GridItem bg="white" gridColumn="1/-1"><Box outline="1px solid" outlineColor="nl.05">{children(row)}</Box></GridItem >]
-    }
+        {
+            [<GridItem bg="white" gridColumn="1/-1"><Box outline="1px solid" outlineColor="nl.05">{children(row)}</Box></GridItem >]
+        }
     </>);
 }
 
-export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto' , enableCollapse=false}: TableProps): JSX.Element => {
+export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto', enableCollapse = false, showRange = columns.length + 1  }: TableProps): JSX.Element => {
     const compensation = enableCollapse ? 1 : 0;
     const columnLen = columns.length + compensation;
     let girdTemplate = `repeat(${columnLen}, 1fr)`;
@@ -139,8 +141,8 @@ export const Table = ({ children, strip = false, columns = [], data = [], templa
     if (Array.isArray(template)) {
         const total = sum(template);
         const min = Math.min(...template);
-        width = Math.ceil(6/min * total);
-        girdTemplate = template.map((v)=>`${Math.floor(v/total*100)}%`).join(' ');
+        width = Math.ceil(6 / min * total);
+        girdTemplate = template.map((v) => `${Math.floor(v / total * 100)}%`).join(' ');
     }
     const stripStyle = strip ? reduce((aggregate: stripStyle, offset: number): stripStyle => {
         return {
@@ -151,8 +153,11 @@ export const Table = ({ children, strip = false, columns = [], data = [], templa
         }
     },
         {}, range(0, columnLen)) : {};
+
+    const headers = useMemo(() => children[0](columns), [columns]);
+    const contents = useMemo(() => children[1](data), [data]);
     return <Grid templateColumns={girdTemplate} sx={stripStyle} minWidth={`${width}rem`}>
-        {children[0](columns)}
-        {children[1](data)}
+        {headers}
+        {take(showRange, contents)}
     </Grid>
 }
