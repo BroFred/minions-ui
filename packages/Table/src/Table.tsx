@@ -148,7 +148,7 @@ const isObject = (val:unknown) => {
     return val != null && typeof val === 'object' && Array.isArray(val) === false;
 };
 
-export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto', enableCollapse = false, showRange = columns.length + 1 }: TableProps): JSX.Element => {
+export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto', enableCollapse = false, showRange = data.length + 1 }: TableProps): JSX.Element => {
     const compensation = enableCollapse ? 1 : 0;
     const columnLen = columns.length + compensation;
     let girdTemplate = `repeat(${columnLen}, 1fr)`;
