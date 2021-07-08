@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react"
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { reduce, range, sum, take } from 'ramda';
+import { useResizeDetector } from 'react-resize-detector';
 
 type textAlign = 'left' | 'right' | undefined;
 type size = 'sm' | 'mid' | 'lg' | undefined;
@@ -15,7 +16,11 @@ type sort = {
     isSortedDesc: boolean | undefined;
 }
 
-export interface TableText {
+interface resize {
+    resize?: undefined | {setResize:(param:object)=>void; resize:object; };
+    resizeId?:string;
+}
+export interface TableText extends resize {
     children: React.ReactNode;
     size?: size;
     textAlign?: textAlign;
@@ -33,7 +38,7 @@ interface TableProps {
     data: any[][];
     template: 'auto' | 'even' | Array<number>
     enableCollapse: boolean;
-    showRange: number;
+    showRange?: number;
 }
 
 type stripStyle = {
@@ -44,6 +49,7 @@ type stripStyle = {
 interface TdCollapsedProps {
     children: (arg: any) => React.ReactNode[];
     row: unknown[];
+    show: boolean;
 }
 const getTextAlign = (textAlign: textAlign): string => textAlign === 'right' ? 'flex-end' : 'space-between';
 const getH = (size: size): number => {
@@ -66,10 +72,18 @@ export const ThRow = ({ children }: { children: React.ReactNode[] }) => {
     return <>{children}</>
 }
 
-export const ThPure = ({ children, size, textAlign }: TableText): JSX.Element => {
+export const ThPure = ({ children, size, textAlign, resize, resizeId="" }: TableText): JSX.Element => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
-    return <Flex className="cell" alignItems="center" bg={'nl.08'} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor="nl.05">
+    const { ref } = useResizeDetector({
+        skipOnMount: true,
+        onResize: (w) => {
+            if(resize){
+                resize.setResize({ ...resize.resize, [resizeId]: w });
+            }
+        }
+    });
+    return <Flex ref={ref} resize={resize? "horizontal" : "none"} overflow="auto" className="cell" alignItems="center" bg={'nl.08'} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor="nl.05">
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
     </Flex>
 }
@@ -122,21 +136,28 @@ export const TdPure = ({ children, size, textAlign }: TableText) => {
     return <GridItem bg="white" className="cell"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
 }
 
-export const TdCollapsed = ({ children, row }:TdCollapsedProps) => {
+export const TdCollapsed = ({ children, row, show }: TdCollapsedProps) => {
     return (<>
-        {
+        {show &&
             [<GridItem bg="white" gridColumn="1/-1"><Box outline="1px solid" outlineColor="nl.05">{children(row)}</Box></GridItem >]
         }
     </>);
 }
 
-export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto', enableCollapse = false, showRange = columns.length + 1  }: TableProps): JSX.Element => {
+const isObject = (val:unknown) => {
+    return val != null && typeof val === 'object' && Array.isArray(val) === false;
+};
+
+export const Table = ({ children, strip = false, columns = [], data = [], template = 'auto', enableCollapse = false, showRange = columns.length + 1 }: TableProps): JSX.Element => {
     const compensation = enableCollapse ? 1 : 0;
     const columnLen = columns.length + compensation;
     let girdTemplate = `repeat(${columnLen}, 1fr)`;
     let width;
     if (template === 'even') {
         girdTemplate = `repeat(${columnLen}, minmax(6rem, 1fr))`;
+    }
+    if (isObject(template)) {
+        girdTemplate =  Object.values(template).map((v)=>v+'px').join(' ')
     }
     if (Array.isArray(template)) {
         const total = sum(template);
@@ -154,8 +175,8 @@ export const Table = ({ children, strip = false, columns = [], data = [], templa
     },
         {}, range(0, columnLen)) : {};
 
-    const headers = useMemo(() => children[0](columns), [columns]);
-    const contents = useMemo(() => children[1](data), [data]);
+    const headers = children[0](columns);
+    const contents = children[1](data);
     return <Grid templateColumns={girdTemplate} sx={stripStyle} minWidth={`${width}rem`}>
         {headers}
         {take(showRange, contents)}

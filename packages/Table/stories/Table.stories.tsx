@@ -1,11 +1,13 @@
 import { ThSort, TdPure, ThSortProps, ThRow, Table, ThPure, TdCollapsed } from '../src/Table';
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react';
-import { map, range, addIndex, drop } from 'ramda';
+import { map, range, addIndex, takeWhile, repeat } from 'ramda';
 import {
-    Grid,
+    IconButton,
     Box
 } from "@chakra-ui/react"
+import { ChevronDownIcon } from '@chakra-ui/icons'
+
 export default {
     title: 'Table',
     component: ThSort,
@@ -105,12 +107,18 @@ const SingleTemplate: Story<ThSortProps> = (args) => {
             columnName: 'a',
             column: "func"
         },
-    ];
-    const data = [[1],["312323133123131231231231312313131313123123131231231231231"]];
-    const mapWithIndex = addIndex(map);
-    return <Table strip columns={columns} data={data} template="even">
         {
-            (cols) => map(({ columnName, column }) => <Box position="sticky"><ThPure textAlign="right" key={column}>{columnName}</ThPure></Box>, cols)
+            columnName: 'b',
+            column: "b"
+        },
+    ];
+    const data = [[1,2],["312323133123131231231231312313131313123123131231231231231","76575757575675"]];
+    const mapWithIndex = addIndex(map);
+    const [resize, setResize] = useState({func: 250, b: 250});
+
+    return <Table template={resize} strip columns={columns} data={data}>
+        {
+            (cols) => map(({ columnName, column }) => <Box position="sticky"><ThPure textAlign="right" resizeId={column} resize={{resize, setResize}} key={column}>{columnName}</ThPure></Box>, cols)
         }
         {
             (d) => mapWithIndex(
@@ -125,6 +133,10 @@ export const  Single= SingleTemplate.bind({});
 const CustomizedTemplate: Story<ThSortProps> = (args) => {
     const columns: columns = [
         {
+            columnName: '',
+            column: "func"
+        },
+        {
             columnName: 'a',
             column: "a"
         },
@@ -138,15 +150,17 @@ const CustomizedTemplate: Story<ThSortProps> = (args) => {
         },
     ];
     const data = [range(1, 4), 
-        range(1, 4), range(1, 4)];
+        range(1, 4), range(1, 4),  range(1, 4)];
     const mapWithIndex = addIndex(map);
-    return <Table strip columns={columns} data={data} template={[1, 1, 2]} enableCollapse={true}>
+    const [showCollapse, setShowCollapse] = useState([]);
+    
+    return <Table strip columns={columns} data={data} template={[1, 1,1, 2]} enableCollapse={true}>
         {
             (cols) => map(({ columnName, column }) => <Box position="sticky"><ThPure textAlign="right" key={column}>{columnName}</ThPure></Box>, cols)
         }
         {
             (d) => mapWithIndex(
-                (val, index) => [...mapWithIndex((val1, index1) => <TdPure  key={`${index}_${index1}`} >{val1}</TdPure>, val), <TdCollapsed key={`${index}-collapsed`} row={val}>
+                (val, index) => [<TdPure key={`${index}-action`}><IconButton aria-label="action" icon={<ChevronDownIcon/>} onClick={()=>setShowCollapse(showCollapse.includes(index) ? takeWhile((v)=>v!==index,showCollapse) : [...showCollapse, index])}/></TdPure>, ...mapWithIndex((val1, index1) => <TdPure  key={`${index}_${index1}`} >{val1}</TdPure>, val), <TdCollapsed show={showCollapse.includes(index)} key={`${index}-collapsed`} row={val}>
                     {
                         (row)=> <div>{row.join('-_____________________________')}</div>
                     }
