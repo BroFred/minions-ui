@@ -1,5 +1,8 @@
-import React, {ReactElement, ReactNode, useRef} from 'react';
+import React, {useRef} from 'react';
 import { Box } from '@chakra-ui/react';
+import { always } from 'ramda';
+
+always(undefined);
 
 export interface ScrollBottomTriggerProps {
     height: string;
