@@ -28,6 +28,7 @@
   "dependencies": {
     "@minion-ui/button": "^0.0.1",
     "@minion-ui/pagination": "^0.0.1",
+    "@minion-ui/scrollBottomTrigger": "^0.0.1",
     "@minion-ui/table": "^0.0.1",
     "@minion-ui/theme": "^0.0.1"
   }
