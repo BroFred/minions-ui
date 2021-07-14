@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react';
-import MultipleSelect, { SelectLayout, SingleSelect } from '../src/Select';
+import MultipleSelect, { SelectLayout, SingleSelect, SelectProps } from '../src/Select';
 import { map, filter } from 'ramda';
 import { SelectProps } from '@chakra-ui/react';
 
