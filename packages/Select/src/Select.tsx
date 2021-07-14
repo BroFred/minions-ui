@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Popover,
@@ -15,7 +15,7 @@ import {
     useColorMode
 } from '@chakra-ui/react';
 import { TriangleUpIcon,TriangleDownIcon } from '@chakra-ui/icons'
-import { filter, map } from 'ramda';
+import { filter, map, propEq, find } from 'ramda';
 export interface SelectProps {
     select: {
         items: {
@@ -29,17 +29,17 @@ export interface SelectProps {
 interface LayoutSelectProps extends SelectProps{
   children: ((arg: any) => React.ReactNode[])[];
 }
-interface MultipleSelectProps extends SelectProps {
+interface SelectHeaderProps extends SelectProps {
   placeholder?: string,
 }
 
-interface MultipleOptionProps extends SelectProps {
+interface SelectOptionProps extends SelectProps {
   value: string,
   label: string,
   currentSelection : number[],
 }
 
-export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }: MultipleSelectProps) => {
+export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }: SelectHeaderProps) => {
     const { colorMode } = useColorMode();
     const { currentSelection, items } = select;
     const currentElem = filter(
@@ -63,7 +63,7 @@ export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }
         }
     </Flex>
 }
-MultipleSelect.Option = ({ value, label, currentSelection, setSelect }:MultipleOptionProps) => {
+MultipleSelect.Option = ({ value, label, currentSelection, setSelect }:SelectOptionProps) => {
     const { colorMode } = useColorMode();
     return <VStack align="stretch">
       <Checkbox 
@@ -74,7 +74,10 @@ MultipleSelect.Option = ({ value, label, currentSelection, setSelect }:MultipleO
         color={colorMode === 'light' ? 'nl.600' : 'nd.200'}
         _hover={{
           background: colorMode === 'light' ? 'nl.100' : 'nd.500',
-        }} onChange={()=>{setSelect(value)}} value={value} isChecked={currentSelection.includes(value)}>
+        }} onChange={(e)=>{
+          e.stopPropagation();
+          setSelect(value);
+        }} value={value} isChecked={currentSelection.includes(value)}>
         {label}
       </Checkbox>
     </VStack>
@@ -110,12 +113,31 @@ export const SelectLayout = ({ select, children, setSelect,...others}: LayoutSel
           <PopoverContent width='12rem' {...others} _focus={{
             boxShadow: 'none',
           }}>
-              <PopoverBody px='0' py='0.375rem' maxHeight='25rem' overflowY='scroll' bg={colorMode === 'light' ? 'nl.13' : 'nd.600'}>{children[1](select, setSelect)}</PopoverBody>
+              <PopoverBody px='0' py='0.375rem' maxHeight='25rem' overflowY='scroll' bg={colorMode === 'light' ? 'nl.13' : 'nd.600'} onClick={() => setIsShow(!isShow)}>{children[1](select, setSelect)}</PopoverBody>
           </PopoverContent>
         </Popover>
     </Box>
-    )
-    
+    ) 
+}
+
+export const SingleSelect = ({ select, placeholder ='选择内容' }: SelectHeaderProps): JSX.Element => {
+  const { colorMode } = useColorMode();
+  const { currentSelection, items } = select;
+  const currentElem = find(propEq('value', currentSelection))(items)
+  return (<Flex h='2.375rem' color={colorMode === 'light' ? 'nl.700' : 'nd.200'} fontSize={14} alignItems='center'>{currentElem ? currentElem.label : placeholder}</Flex>)
+}
+
+
+SingleSelect.Option = ({ value, label, setSelect }:SelectOptionProps) => {
+  const { colorMode } = useColorMode();
+  return <Box align="left"
+  px={4}
+  py={2.5}
+  key={value}
+  color={colorMode === 'light' ? 'nl.·600' : 'nd.200'}
+  _hover={{
+    bg: colorMode === 'light' ? 'nl.100' : 'nd.500',
+  }} onClick={()=>{setSelect(value)}} value={value}>{label}</Box>
 }
 
 export default MultipleSelect
