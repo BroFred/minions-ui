@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
-    Select, SelectProps, Box,
+    Box,
     Popover,
     PopoverTrigger,
     PopoverContent,
@@ -12,20 +12,35 @@ import {
     TagCloseButton,
     Flex,
     Checkbox,
+    useColorMode
 } from '@chakra-ui/react';
 import { TriangleUpIcon,TriangleDownIcon } from '@chakra-ui/icons'
 import { filter, map } from 'ramda';
-
-interface multiSelect {
+export interface SelectProps {
     select: {
         items: {
             value: string | number;
             label: string;
         }[];
         currentSelection: string | number[];
-    }
+    },
+    setSelect: (param:object|string)=>void
 }
-export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }: multiSelect) => {
+interface LayoutSelectProps extends SelectProps{
+  children: ((arg: any) => React.ReactNode[])[];
+}
+interface MultipleSelectProps extends SelectProps {
+  placeholder?: string,
+}
+
+interface MultipleOptionProps extends SelectProps {
+  value: string,
+  label: string,
+  currentSelection : number[],
+}
+
+export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }: MultipleSelectProps) => {
+    const { colorMode } = useColorMode();
     const { currentSelection, items } = select;
     const currentElem = filter(
         ({ value }) => {
@@ -37,37 +52,39 @@ export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }
     return <Flex width='full' flexWrap="wrap">
         { currentSelection?.length ?
         map(
-          ({ value, label }) => <Tag h="2rem" m="1" key={value} bg='nl.300' cursor='pointer'><TagLabel>{label}</TagLabel><TagCloseButton onClick={(e) => {
+          ({ value, label }) => <Tag h="2rem" m="1" key={value} bg={colorMode === 'light' ? 'nl.300' : 'nd.400'} color={colorMode === 'light' ? 'nl.700' : 'nd.600'} cursor='pointer'><TagLabel>{label}</TagLabel><TagCloseButton color={colorMode === 'light' ? 'nl.900' : 'nd.600'} onClick={(e) => {
               e.stopPropagation();
               setSelect({ ...select, currentSelection: filter((v) => v !== value, currentSelection) })
           }} /></Tag>
           , currentElem
         )
           :
-          <Flex h='2.375rem' color='nl.700' fontSize={14} alignItems='center'>{ placeholder }</Flex>
+          <Flex h='2.375rem' color={colorMode === 'light' ? 'nl.700' : 'nd.200'} fontSize={14} alignItems='center'>{ placeholder }</Flex>
         }
     </Flex>
 }
-MultipleSelect.Option = ({ value, label, currentSelection, setSelect }) => {
+MultipleSelect.Option = ({ value, label, currentSelection, setSelect }:MultipleOptionProps) => {
+    const { colorMode } = useColorMode();
     return <VStack align="stretch">
       <Checkbox 
-        size='lg'
         h='10'
         px='0.625rem'
-        colorScheme='blue'
-        color='nl.700'
+        iconSize='1.25rem'
+        iconColor='nl.13'
+        color={colorMode === 'light' ? 'nl.600' : 'nd.200'}
         _hover={{
-          background: "nl.100",
+          background: colorMode === 'light' ? 'nl.100' : 'nd.500',
         }} onChange={()=>{setSelect(value)}} value={value} isChecked={currentSelection.includes(value)}>
         {label}
       </Checkbox>
     </VStack>
 }
 
-export const SelectLayout = ({ select, children, setSelect,...others}) => {
+export const SelectLayout = ({ select, children, setSelect,...others}: LayoutSelectProps) => {
     const initialFocusRef = React.useRef();
     const insideRef = React.useRef();
     const [isShow, setIsShow] = useState(false);
+    const { colorMode } = useColorMode();
     useOutsideClick({
         ref: insideRef,
         handler: () => {
@@ -76,22 +93,24 @@ export const SelectLayout = ({ select, children, setSelect,...others}) => {
     });
     return (
       <Box ref={insideRef} display="inline-block">
-        <Popover isOpen={isShow} initialFocusRef={initialFocusRef}>
+        <Popover isOpen={isShow} initialFocusRef={initialFocusRef} >
           <PopoverTrigger>
               <Box width='12rem' {...others} p='0' onClick={() => setIsShow(!isShow)}  ref={initialFocusRef} >
-                <Flex position='relative' bg='nl.100' justifyContent="flex-start" alignItems='center' cursor='pointer' pl='0.875rem' pr='2rem' py='0.375rem' borderRadius='4' 
+                <Flex position='relative' bg={colorMode === 'light' ? 'nl.100' : 'nd.600'} justifyContent="flex-start" alignItems='center' cursor='pointer' pl='0.875rem' pr='2rem' py='0.375rem' borderRadius='4' 
                     onClick={()=>{setSelect({ ...select, filter: "" })}}>
                       {children[0](select, setSelect)}
+                      <Box position='absolute' right='1.25rem' top='1rem' fontSize='12' color={colorMode === 'light' ? 'nl.700' : 'nd.300'}>
                       {
-                          isShow ? <TriangleUpIcon position='absolute' right='1.25rem' top='1.2rem' fontSize='12' /> : <TriangleDownIcon  position='absolute' right='1.25rem' top='1.2rem' fontSize='12'/>
+                          isShow ? <TriangleUpIcon /> : <TriangleDownIcon />
                       }
+                      </Box>
                   </Flex>
               </Box>
           </PopoverTrigger>
           <PopoverContent width='12rem' {...others} _focus={{
             boxShadow: 'none',
           }}>
-              <PopoverBody px='0' py='0.375rem' maxHeight='25rem' overflowY='scroll'>{children[1](select, setSelect)}</PopoverBody>
+              <PopoverBody px='0' py='0.375rem' maxHeight='25rem' overflowY='scroll' bg={colorMode === 'light' ? 'nl.13' : 'nd.600'}>{children[1](select, setSelect)}</PopoverBody>
           </PopoverContent>
         </Popover>
     </Box>

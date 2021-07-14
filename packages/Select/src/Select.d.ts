@@ -1,20 +1,28 @@
-/// <reference types="react" />
-export interface PaginationProps {
-    pageLength: number;
-    page: {
-        currentPage: number;
-        onPageChange: (page: number) => {};
+import React from 'react';
+export interface SelectProps {
+    select: {
+        items: {
+            value: string | number;
+            label: string;
+        }[];
+        currentSelection: string | number[];
     };
+    setSelect: (param: object) => void;
 }
-export declare const paginationTheme: {
-    baseStyle: ({ colorMode }: {
-        colorMode: string;
-    }) => {
-        color: string;
-        fontSize: string;
-        borderRadius: string;
-        mx: number;
-    };
+interface LayoutSelectProps extends SelectProps {
+    children: ((arg: any) => React.ReactNode[])[];
+}
+interface MultipleSelectProps extends SelectProps {
+    placeholder?: string;
+}
+interface MultipleOptionProps extends SelectProps {
+    value: string;
+    label: string;
+    currentSelection: number[];
+}
+export declare const MultipleSelect: {
+    ({ select, setSelect, placeholder }: MultipleSelectProps): JSX.Element;
+    Option({ value, label, currentSelection, setSelect }: MultipleOptionProps): JSX.Element;
 };
-declare const Pagination: ({ pageLength, page: { currentPage, onPageChange } }: PaginationProps) => JSX.Element;
-export default Pagination;
+export declare const SelectLayout: ({ select, children, setSelect, ...others }: LayoutSelectProps) => JSX.Element;
+export default MultipleSelect;
