@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react';
-import MultipleSelect, { SelectLayout } from '../src/Select';
+import MultipleSelect, { SelectLayout, SingleSelect } from '../src/Select';
 import { map, filter } from 'ramda';
 import { SelectProps } from '@chakra-ui/react';
 
@@ -40,5 +40,30 @@ const MutliTemplate: Story<SelectProps> = (args) => {
 
 export const mutli = MutliTemplate.bind({});
 mutli.args = {
+};
 
+const SingleTemplate: Story<SelectProps> = (args) => {
+    const [select, setSelect] = useState({
+        currentSelection: [],
+        items: [{ label: '英语',value: 'english' },{label: '中文',value: 'chinese'}, {label: '数学', value: 'math'}]
+    })
+    return (
+        <SelectLayout select={select} setSelect={setSelect} width='10rem'>
+            {
+                (selection) => <SingleSelect select={selection} />
+            }
+            {
+               (selection, setSelection) => map(({ value, label }) => <SingleSelect.Option key={value} value={value} label={label} currentSelection={selection.currentSelection} setSelect={(v) => {
+                setSelection({
+                    ...selection,
+                    currentSelection: v
+                })
+            }} />,  selection.items)
+            }
+        </SelectLayout>
+    )
+}
+
+export const single = SingleTemplate.bind({});
+single.args = {
 };

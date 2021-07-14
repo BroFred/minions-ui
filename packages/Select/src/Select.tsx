@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
-    Select, SelectProps, Box,
+    Box,
     Popover,
     PopoverTrigger,
     PopoverContent,
@@ -14,18 +14,18 @@ import {
     Checkbox,
 } from '@chakra-ui/react';
 import { TriangleUpIcon,TriangleDownIcon } from '@chakra-ui/icons'
-import { filter, map } from 'ramda';
+import { filter, map, propEq, find } from 'ramda';
 
-interface multiSelect {
-    select: {
-        items: {
-            value: string | number;
-            label: string;
-        }[];
-        currentSelection: string | number[];
-    }
+interface SelectProps {
+  select: {
+    items: {
+        value: string | number;
+        label: string;
+    }[];
+    currentSelection: string | number[];
+  }
 }
-export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }: multiSelect) => {
+export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }: SelectProps) => {
     const { currentSelection, items } = select;
     const currentElem = filter(
         ({ value }) => {
@@ -58,7 +58,10 @@ MultipleSelect.Option = ({ value, label, currentSelection, setSelect }) => {
         color='nl.700'
         _hover={{
           background: "nl.100",
-        }} onChange={()=>{setSelect(value)}} value={value} isChecked={currentSelection.includes(value)}>
+        }} onChange={(e)=>{
+          e.stopPropagation();
+          setSelect(value);
+        }} value={value} isChecked={currentSelection.includes(value)}>
         {label}
       </Checkbox>
     </VStack>
@@ -91,7 +94,7 @@ export const SelectLayout = ({ select, children, setSelect,...others}) => {
           <PopoverContent width='12rem' {...others} _focus={{
             boxShadow: 'none',
           }}>
-              <PopoverBody px='0' py='0.375rem' maxHeight='25rem' overflowY='scroll'>{children[1](select, setSelect)}</PopoverBody>
+              <PopoverBody px='0' py='0.375rem' maxHeight='25rem' onClick={() => setIsShow(!isShow)} overflowY='scroll'>{children[1](select, setSelect)}</PopoverBody>
           </PopoverContent>
         </Popover>
     </Box>
@@ -99,4 +102,21 @@ export const SelectLayout = ({ select, children, setSelect,...others}) => {
     
 }
 
+
 export default MultipleSelect
+export const SingleSelect = ({ select, placeholder ='选择内容' }: SelectProps): JSX.Element => {
+  const { currentSelection, items } = select;
+  const currentElem = find(propEq('value', currentSelection))(items)
+  console.log('currentElem::', currentElem)
+  return (<Flex h='2.375rem' color='nl.700' fontSize={14} alignItems='center'>{currentElem ? currentElem.label : placeholder}</Flex>)
+}
+
+
+SingleSelect.Option = ({ value, label, currentSelection, setSelect }) => {
+  return <Box align="left"
+  px={4}
+  py={2.5}
+  key={value}
+  _hover={{ bg: 'nl.07' }}
+  color='nl.03' onClick={()=>{setSelect(value)}} value={value}>{label}</Box>
+}
