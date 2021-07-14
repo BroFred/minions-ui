@@ -42,7 +42,7 @@ export const MultipleSelect = ({ select, setSelect, isShow }: multiSelect) => {
     );
 
     return <Flex position='relative' bg='nl.100' height='auto'
-        width='300px' flexWrap="wrap"  justifyContent="flex-start" alignItems='center' pl='0.875rem' pr='2rem' py='0.375rem' borderRadius='4' onClick={(e)=>{e.preventDefault();
+         flexWrap="wrap"  justifyContent="flex-start" alignItems='center' pl='0.875rem' pr='2rem' py='0.375rem' borderRadius='4' onClick={(e)=>{e.preventDefault();
           setSelect({ ...select, filter: "" })}}>
             { currentSelection?.length ?
             map(
@@ -76,7 +76,7 @@ MultipleSelect.Option = ({ value, label, currentSelection, setSelect }) => {
     </VStack>
 }
 
-export const SelectLayout = ({ select, children, setSelect }) => {
+export const SelectLayout = ({ select, children, setSelect,...others}) => {
     const initialFocusRef = React.useRef();
     const insideRef = React.useRef();
     const [isShow, setIsShow] = useState(false);
@@ -90,11 +90,11 @@ export const SelectLayout = ({ select, children, setSelect }) => {
       <Box ref={insideRef} display="inline-block">
         <Popover isOpen={isShow} initialFocusRef={initialFocusRef}>
           <PopoverTrigger>
-              <Box position='relative' width='300px' p='0' onClick={() => setIsShow(!isShow)}  ref={initialFocusRef} >
+              <Box position='relative' width='12rem' {...others} p='0' onClick={() => setIsShow(!isShow)}  ref={initialFocusRef} >
                 {children[0](select, setSelect, isShow)}
               </Box>
           </PopoverTrigger>
-          <PopoverContent width='300px' _focus={{
+          <PopoverContent width='12rem' {...others} _focus={{
             boxShadow: 'none',
           }}>
               <PopoverBody px='0' py='0.375rem' maxHeight='25rem' overflowY='scroll'>{children[1](select, setSelect)}</PopoverBody>

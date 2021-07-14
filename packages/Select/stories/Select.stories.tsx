@@ -22,9 +22,9 @@ const MutliTemplate: Story<SelectProps> = (args) => {
     });
     console.log('select',select)
     return (
-        <SelectLayout select={select}  setSelect={setSelect}>
+        <SelectLayout select={select}  setSelect={setSelect} width='20rem'>
             {
-                (selection, setSelection, isShow) => <MultipleSelect select={selection} setSelect={setSelection} isShow={isShow}/>
+                (selection, setSelection, isShow) => <MultipleSelect select={selection} setSelect={setSelection} isShow={isShow} />
             }
             {
                (selection, setSelection) => map(({ value, label }) => <MultipleSelect.Option key={value} value={value} label={label} currentSelection={selection.currentSelection} setSelect={(v) => {
