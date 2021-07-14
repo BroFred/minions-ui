@@ -36,7 +36,7 @@ interface SelectHeaderProps extends SelectProps {
 interface SelectOptionProps extends SelectProps {
   value: string,
   label: string,
-  currentSelection : number[],
+  currentSelection : string | number[],
 }
 
 export const MultipleSelect = ({ select, setSelect, placeholder='选择内容' }: SelectHeaderProps) => {
@@ -128,13 +128,15 @@ export const SingleSelect = ({ select, placeholder ='选择内容' }: SelectHead
 }
 
 
-SingleSelect.Option = ({ value, label, setSelect }:SelectOptionProps) => {
+SingleSelect.Option = ({ value, label, setSelect, currentSelection }:SelectOptionProps) => {
   const { colorMode } = useColorMode();
   return <Box align="left"
   px={4}
   py={2.5}
   key={value}
   color={colorMode === 'light' ? 'nl.·600' : 'nd.200'}
+  bg={currentSelection === value ? (colorMode === 'light' ? 'nl.100' : 'nd.500') : ''}
+  cursor='pointer'
   _hover={{
     bg: colorMode === 'light' ? 'nl.100' : 'nd.500',
   }} onClick={()=>{setSelect(value)}} value={value}>{label}</Box>

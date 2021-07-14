@@ -43,7 +43,7 @@ mutli.args = {
 
 const SingleTemplate: Story<SelectProps> = (args) => {
     const [select, setSelect] = useState({
-        currentSelection: [],
+        currentSelection: '',
         items: [{ label: '英语',value: 'english' },{label: '中文',value: 'chinese'}, {label: '数学', value: 'math'}]
     })
     return (
