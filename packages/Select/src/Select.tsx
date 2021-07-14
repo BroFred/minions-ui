@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Popover,
@@ -127,7 +127,6 @@ export const SingleSelect = ({ select, placeholder ='选择内容' }: SelectHead
   const { colorMode } = useColorMode();
   const { currentSelection, items } = select;
   const currentElem = find(propEq('value', currentSelection))(items)
-  console.log('currentElem::', currentElem)
   return (<Flex h='2.375rem' color={colorMode === 'light' ? 'nl.700' : 'nd.200'} fontSize={14} alignItems='center'>{currentElem ? currentElem.label : placeholder}</Flex>)
 }
 
