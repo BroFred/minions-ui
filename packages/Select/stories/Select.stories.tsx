@@ -24,11 +24,10 @@ const MutliTemplate: Story<SelectProps> = (args) => {
     return (
         <SelectLayout select={select}  setSelect={setSelect} width='20rem'>
             {
-                (selection, setSelection, isShow) => <MultipleSelect select={selection} setSelect={setSelection} isShow={isShow} />
+                (selection, setSelection) => <MultipleSelect select={selection} setSelect={setSelection}/>
             }
             {
                (selection, setSelection) => map(({ value, label }) => <MultipleSelect.Option key={value} value={value} label={label} currentSelection={selection.currentSelection} setSelect={(v) => {
-                console.log('v',v)
                 setSelection({
                     ...selection,
                     currentSelection: selection.currentSelection.includes(v) ? filter((elem)=>elem!==v, selection.currentSelection) : [ ...selection.currentSelection,v]
