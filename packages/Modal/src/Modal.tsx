@@ -52,22 +52,22 @@ export const Modal:React.FC<ModalProps> = ({
     return {
       textAlign: 'center',
       fontSize: '1rem',
-      marginTop: '2rem'
+      paddingTop: '2rem'
     }
   }
   return (
     <CModal isOpen={isOpen} {...others} scrollBehavior={'inside'} trapFocus={false} >
       <ModalOverlay />
       <ModalContent boxShadow='16'>
-        <ModalHeader px='2rem' py='1rem' {...getSpecialCSS()}>{title}</ModalHeader>
+        <ModalHeader px='2rem' py='1rem' bg={colorMode === 'light' ? 'nd.50' : 'nd.600'} color={colorMode === 'light' ? 'nl.900' : 'nd.100'}  {...getSpecialCSS()}>{title}</ModalHeader>
         {hasClose && <ModalCloseButton right='2rem' />}
-        <ModalBody px='2rem' py='1rem' fontSize='0.875rem' color={`${colorMode === 'light' ? 'nl.02' : 'nl.02'}`}>
+        <ModalBody px='2rem' py='1rem' fontSize='0.875rem' bg={colorMode === 'light' ? 'nd.50' : 'nd.600'} color={`${colorMode === 'light' ? 'nl.700' : 'nd.200'}`}>
           {content}
         </ModalBody>
-        <ModalFooter borderRadius='0.5rem' bg={`${colorMode === 'light' ? 'nl.10' : 'nl.10'}`} mt='1rem' px='2rem' py='0.75rem' justifyContent={getJustify()}>
+        <ModalFooter borderRadius='0.5rem' bg={colorMode === 'light' ? 'nl.50' : 'nd.800'}  px='2rem' pt='1.75rem' pb='0.75rem' justifyContent={getJustify()}>
           {extraFootInfo}
           <div>
-            {!!cancelContent && <Button mode='secondary' onClick={cancelCallBack} mr='0.5rem' {...otherCancelBtn}>{cancelContent}</Button>}
+            {!!cancelContent && <Button mode='secondary' onClick={cancelCallBack} mr='0.5rem' bg={colorMode === 'light' ? 'nd.50' : 'nd.800'} color={colorMode === 'light' ? 'nl.600' : 'nd.300'} _hover={{bg: colorMode === 'light' ? 'nl.50' : 'nd.600'}} _active={{bg: colorMode === 'light' ? 'nl.100' : 'nd.500'}} {...otherCancelBtn}>{cancelContent}</Button>}
             <Button onClick={confirmCallBack} {...otherConfirm}>{confirmContent}</Button>
           </div>
         </ModalFooter>

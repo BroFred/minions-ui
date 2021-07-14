@@ -25,6 +25,7 @@ const Template:Story<ModalProps> = (args) => {
     ),
     confirmBtn: {
       content: '确定',
+      // isDisabled: true,
       callBack: () => {
         alert(111);
         onClose();
@@ -32,6 +33,7 @@ const Template:Story<ModalProps> = (args) => {
     },
     cancelBtn: {
       content: '取消',
+      // isDisabled: true, 
       callBack: () => {
         alert('取消');
         onClose();
