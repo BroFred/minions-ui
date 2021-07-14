@@ -1,10 +1,12 @@
 import { ThSort, TdPure, ThSortProps, ThRow, Table, ThPure, TdCollapsed } from '../src/Table';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Story, Meta } from '@storybook/react';
 import { map, range, addIndex, takeWhile, repeat } from 'ramda';
 import {
     IconButton,
-    Box
+    Box,
+    useColorMode,
+    Button,
 } from "@chakra-ui/react"
 import { ChevronDownIcon } from '@chakra-ui/icons'
 
@@ -20,6 +22,8 @@ type column = {
 type columns = column[];
 const Template: Story<ThSortProps> = (args) => {
     const [sort, setSort] = useState({ sortKey: '', isSortedDes: undefined });
+    const { colorMode } = useColorMode();
+    const [colorModeState, setColorModeState] = useState<string>(colorMode)
     const columns: columns = [
         {
             columnName: '',
@@ -86,7 +90,12 @@ const Template: Story<ThSortProps> = (args) => {
         range(1, 15), range(1, 15), range(1, 15), range(1, 15), range(1, 15), range(1, 15), range(1, 15)
     ];
     const mapWithIndex = addIndex(map);
-    return <Table strip columns={columns} data={data} template="even">
+
+    useEffect(() => {
+        localStorage.setItem('chakra-ui-color-mode', 'light' )
+    }, [])
+    return <Box>
+        <Table strip columns={columns} data={data} template="even">
         {
             (cols) => map(({ columnName, column }) => <Box position="sticky"><ThSort key={column} sort={[sort, setSort]} sortKey={column}>{columnName}</ThSort></Box>, cols)
         }
@@ -96,6 +105,12 @@ const Template: Story<ThSortProps> = (args) => {
                 d)
         }
     </Table>
+    <Button marginTop='1rem' onClick={() => {
+        const otherColorMode = localStorage.getItem('chakra-ui-color-mode') === 'light' ? 'dark' : 'light' ;
+        localStorage.setItem('chakra-ui-color-mode', otherColorMode);
+        // rerender
+        setColorModeState(otherColorMode) }}>switch theme</Button>
+    </Box>
 };
 
 export const Sort = Template.bind({});
