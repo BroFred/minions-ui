@@ -31,7 +31,7 @@ const WrapTableTemplate: Story = () => {
             column: 'd',
         }
     ];
-    const data = range(1, 6).map((_, index) => range(1 + index , 5 + index));
+    const data = range(1, 21).map((_, index) => range(1 + index , 5 + index));
     const height = 300;
     const lineHeigt = 40;
     const lines = Math.ceil(height / lineHeigt) + 1;
@@ -47,7 +47,8 @@ const WrapTableTemplate: Story = () => {
             }
     }
 
-    return <ScrollBottomTrigger maxHeight='300px' scrollBottomCallback={scrollBottomCallback}> 
+    return <ScrollBottomTrigger maxHeight='300px' scrollBottomCallback={scrollBottomCallback}>
+        <Box>
         <Table strip columns={columns} data={data} template="even" showRange={showRange}  enableCollapse={false}>
         {
             (cols) => map(({ columnName, column }) => <Box position="sticky"><ThSort key={column} sort={[sort, setSort]} sortKey={column}>{columnName}</ThSort></Box>, cols)
@@ -58,6 +59,7 @@ const WrapTableTemplate: Story = () => {
                 d)
         }
     </Table>
+    </Box>
     </ScrollBottomTrigger>
 }
 
