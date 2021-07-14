@@ -100,7 +100,7 @@ export const SelectLayout = ({ select, children, setSelect,...others}: LayoutSel
           <PopoverTrigger>
               <Box width='12rem' {...others} p='0' onClick={() => setIsShow(!isShow)}  ref={initialFocusRef} >
                 <Flex position='relative' bg={colorMode === 'light' ? 'nl.100' : 'nd.600'} justifyContent="flex-start" alignItems='center' cursor='pointer' pl='0.875rem' pr='2rem' py='0.375rem' borderRadius='4' 
-                    onClick={()=>{setSelect({ ...select, filter: "" })}}>
+                    onClick={()=>{setSelect({ ...select })}}>
                       {children[0](select, setSelect)}
                       <Box position='absolute' right='1.25rem' top='1rem' fontSize='12' color={colorMode === 'light' ? 'nl.700' : 'nd.300'}>
                       {

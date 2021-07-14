@@ -31,7 +31,7 @@ const MutliTemplate: Story<SelectProps> = (args) => {
                     ...selection,
                     currentSelection: selection.currentSelection.includes(v) ? filter((elem)=>elem!==v, selection.currentSelection) : [ ...selection.currentSelection,v]
                 })
-            }} />, filter(({value})=>`${value}`.includes(`${selection.filter}`), selection.items))
+            }} />,selection.items)
             }
         </SelectLayout>
     )
