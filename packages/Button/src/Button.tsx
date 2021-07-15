@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button as CButton, ButtonProps as CButtonProps } from "@chakra-ui/react";
+import { Button as CButton, ButtonProps as CButtonProps, useColorModeValue } from "@chakra-ui/react";
 import { always } from 'ramda';
 
 always(undefined);
@@ -48,55 +48,55 @@ export const ButtonTheme = {
       },
       _active: {
         bg: `${props.colorScheme}.700`,
-        color: props.colorMode === 'light' ? 'nd.50' : 'nd.100'
+        color: useColorModeValue('nd.50', 'nd.100'),
       },
       _disabled: {
         pointerEvents: 'none',
-        bg: props.colorMode === 'light' ? 'nl.200': 'nd.700',
-        color: props.colorMode === 'light' ? 'nl.400' : 'nd.500',
+        bg: useColorModeValue('nl.200', 'nd.700'),
+        color: useColorModeValue('nl.400', 'nd.500'),
         opacity: 1,
       }
     }),
     secondary: (props: VariantProps) => ({
       ...getPaddings(props.size),
       ...defaultStyle,
-      bg: props.colorMode === 'light' ? 'nd.50' : 'nd.900',
-      color: props.colorMode === 'light' ? 'nl.700' : 'nd.300',
+      bg: useColorModeValue('nd.50', 'nd.900'),
+      color: useColorModeValue('nl.700', 'nd.300'),
       borderWidth: '0.063rem',
-      borderColor: props.colorMode === 'light' ? 'nl.600' : 'nd.300',
+      borderColor: useColorModeValue('nl.600', 'nd.300'),
       borderStyle: 'solid',
       _hover:{
-        bg: props.colorMode === 'light' ? `${props.colorScheme}.50` : 'nd.600' ,
-        color: props.colorMode === 'light' ? 'nl.600' : 'nd.300'
+        bg: useColorModeValue(`${props.colorScheme}.50`, 'nd.600'),
+        color: useColorModeValue('nl.600', 'nd.300'),
       },
       _active: {
-        bg: props.colorMode === 'light' ? `${props.colorScheme}.100` : 'nd.500',
-        color: props.colorMode === 'light' ? 'nl.700' : 'nd.200',
-        borderColor: props.colorMode === 'light' ? 'nl.700' : 'nd.200',
+        bg: useColorModeValue(`${props.colorScheme}.100`, 'nd.500'),
+        color: useColorModeValue('nl.700', 'nd.200'),
+        borderColor: useColorModeValue('nl.700', 'nd.200'),
       },
       _disabled: {
         pointerEvents: 'none',
-        bg: props.colorMode === 'light' ? 'nd.50' : 'nd.900',
-        color: props.colorMode === 'light' ? 'nl.400' : 'nd.500',
-        borderColor: props.colorMode === 'light' ? 'nl.400' : 'nd.500',
+        bg: useColorModeValue('nd.50', 'nd.900'),
+        color: useColorModeValue('nl.400', 'nd.500'),
+        borderColor: useColorModeValue('nl.400', 'nd.500'),
         opacity: 1,
       },
     }),
     tertiary: (props: VariantProps) => {
       return {...getPaddings(props.size),
       ...defaultStyle,
-      bg: props.colorMode === 'light' ? 'nl.300' : 'nd.600',
-      color: props.colorMode === 'light' ? 'nl.700' : 'nd.200',
+      bg: useColorModeValue('nl.300', 'nd.600'),
+      color: useColorModeValue('nl.700', 'nd.200'),
       _hover: {
-        color: props.colorMode === 'light' ? `${props.colorScheme}.300` : 'nd.100',
+        color: useColorModeValue(`${props.colorScheme}.300`, 'nd.100'),
       },
       _active: {
-        color: props.colorMode === 'light' ? `${props.colorScheme}.700` : 'nd.300'
+        color: useColorModeValue(`${props.colorScheme}.700`, 'nd.300'),
       },
       _disabled: {
         pointerEvents: 'none',
-        bg: props.colorMode === 'light' ? 'nl.200' : '#2C2E35',
-        color: props.colorMode === 'light' ? 'nl.400' : 'nd.400',
+        bg: useColorModeValue('nl.200', 'nd.700'),
+        color: useColorModeValue('nl.400', 'nd.400'),
         opacity: 1,
       }}
     },
@@ -105,16 +105,16 @@ export const ButtonTheme = {
       minWidth: '2rem',
       fontSize: '0.875rem',
       bg: 'transprent',
-      color: props.colorMode === 'light' ? `${props.colorScheme}.500` : 'nd.200',
+      color: useColorModeValue(`${props.colorScheme}.500`, 'nd.200'),
       _hover:{
-        color: props.colorMode === 'light' ? `${props.colorScheme}.300` : 'nd.100',
+        color: useColorModeValue(`${props.colorScheme}.300`, 'nd.100'),
       },
       _active: {
-        color: props.colorMode === 'light' ? `${props.colorScheme}.700` : 'nd.300',
+        color: useColorModeValue(`${props.colorScheme}.700`, 'nd.300'),
       },
       _disabled: {
         pointerEvents: 'none',
-        color:  props.colorMode === 'light' ? 'nl.300' : 'nd.500',
+        color:  useColorModeValue('nl.300', 'nd.500'),
         opacity: 1,
       }
     }),

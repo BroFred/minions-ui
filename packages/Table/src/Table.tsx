@@ -4,7 +4,7 @@ import {
     Box,
     GridItem,
     Grid,
-    useColorMode,
+    useColorModeValue
 } from "@chakra-ui/react"
 import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons';
 import { reduce, range, sum, take } from 'ramda';
@@ -84,8 +84,7 @@ export const ThPure = ({ children, size, textAlign, resize, resizeId="" }: Table
             }
         }
     });
-    const { colorMode } = useColorMode();
-    return <Flex ref={ref} resize={resize? "horizontal" : "none"} overflow="auto" className="cell" alignItems="center" bg={colorMode === 'light' ? 'nl.200' : 'nd.600'} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor={colorMode === 'light' ? '#B4BFCC' : '#636974'} color={colorMode === 'light' ? 'nl.700' : 'nd.100'}>
+    return <Flex ref={ref} resize={resize? "horizontal" : "none"} overflow="auto" className="cell" alignItems="center" bg={useColorModeValue('nl.200', 'nd.600')} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor={useColorModeValue('nl.400', 'nd.500')} color={useColorModeValue('nl.700', 'nd.100')}>
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
     </Flex>
 }
@@ -101,8 +100,7 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
         return isSortedDesc === value ? undefined : value;
     }
     const h = getH(size);
-    const { colorMode } = useColorMode();
-    return <Flex className="cell" alignItems="center" bg={ colorMode === 'light' ? 'nl.200' : 'nd.600'} outline="1px solid" outlineColor={colorMode === 'light' ? '#B4BFCC' : '#636974'} justifyContent={justifyContent} h={h} color={colorMode === 'light' ? 'nl.700' : 'nd.100'}>
+    return <Flex className="cell" alignItems="center" bg={ useColorModeValue('nl.200', 'nd.600')} outline="1px solid" outlineColor={useColorModeValue('nl.400', 'nd.500')} justifyContent={justifyContent} h={h} color={useColorModeValue('nl.700', 'nd.100')}>
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
         <Flex width="4" mx="2" flexDirection="column">
             <Box onClick={() => setIsSortedDesc({
@@ -110,10 +108,10 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
                 isSortedDesc: setSorted(false)
             })}
                 _hover={{
-                    color: colorMode === 'light' ? 'nl.700' : 'nd.100',
+                    color: useColorModeValue('nl.700', 'nd.100'),
                     cursor: 'pointer',
                 }}
-                aria-label="table sort" h={2.5} w={2.5} lineHeight="0" color={(isSelfSorting && isSortedDesc === false) ? (colorMode === 'light' ? 'nl.700' : 'nd.100') :  (colorMode === 'light' ? 'nl.500' : 'nd.300')} >
+                aria-label="table sort" h={2.5} w={2.5} lineHeight="0" color={(isSelfSorting && isSortedDesc === false) ? (useColorModeValue('nl.700', 'nd.100')) :  (useColorModeValue('nl.500', 'nd.300'))} >
                 <TriangleUpIcon h={2.5} w={2.5} />
             </Box>
             <Box onClick={() => setIsSortedDesc(
@@ -123,10 +121,10 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
                 }
             )}
                 _hover={{
-                    color: colorMode === 'light' ? 'nl.700' : 'nd.100',
+                    color: useColorModeValue('nl.700', 'nd.100'),
                     cursor: 'pointer',
                 }}
-                aria-label="table sort" h={2.5} w={2.5} lineHeight="0" color={(isSelfSorting && isSortedDesc === true) ? (colorMode === 'light' ? 'nl.700' : 'nd.100') : (colorMode === 'light' ? 'nl.500' : 'nd.300')}>
+                aria-label="table sort" h={2.5} w={2.5} lineHeight="0" color={(isSelfSorting && isSortedDesc === true) ? (useColorModeValue('nl.700', 'nd.100')) : (useColorModeValue('nl.500', 'nd.300'))}>
                 <TriangleDownIcon h={2.5} w={2.5} />
             </Box>
         </Flex>
@@ -136,15 +134,13 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
 export const TdPure = ({ children, size, textAlign }: TableText) => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
-    const { colorMode } = useColorMode();
-    return <GridItem bg={colorMode === 'light' ? 'nd.50' : 'nd.900'} className="cell"><Flex alignItems="center" outline="1px solid" outlineColor={colorMode === 'light' ? '#DDE3EE' : '#393E47'} justifyContent={justifyContent} h={h} color={colorMode === 'light' ? 'nl.700' : 'nd.200'}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
+    return <GridItem bg={useColorModeValue('nd.50', 'nd.900')} className="cell"><Flex alignItems="center" outline="1px solid" outlineColor={useColorModeValue('nl.300', 'nd.600')} justifyContent={justifyContent} h={h} color={useColorModeValue('nl.700', 'nd.200')}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
 }
 
 export const TdCollapsed = ({ children, row, show }: TdCollapsedProps) => {
-    const { colorMode } = useColorMode();
     return (<>
         {show &&
-            [<GridItem bg={colorMode === 'light' ? 'nd.50' : 'nd.900'} gridColumn="1/-1"><Box outline="1px solid" outlineColor={colorMode === 'light' ? '#DDE3EE' : '#393E47'} color={colorMode === 'light' ? 'nl.700' : 'nd.200'}>{children(row)}</Box></GridItem >]
+            [<GridItem bg={useColorModeValue('nd.50', 'nd.900')} gridColumn="1/-1"><Box outline="1px solid" outlineColor={useColorModeValue('nl.300', 'nd.600')} color={useColorModeValue('nl.700', 'nd.200')}>{children(row)}</Box></GridItem >]
         }
     </>);
 }
@@ -170,12 +166,11 @@ export const Table = ({ children, strip = false, columns = [], data = [], templa
         width = Math.ceil(6 / min * total);
         girdTemplate = template.map((v) => `${Math.floor(v / total * 100)}%`).join(' ');
     }
-    const { colorMode } = useColorMode();
     const stripStyle = strip ? reduce((aggregate: stripStyle, offset: number): stripStyle => {
         return {
             ...aggregate,
             [`*:nth-of-type(${2 * columnLen}n - ${offset + compensation})`]: {
-                background: colorMode === 'light' ? 'nl.100' : 'nd.800',
+                background: useColorModeValue('nl.100', 'nd.800'),
             }
         }
     },

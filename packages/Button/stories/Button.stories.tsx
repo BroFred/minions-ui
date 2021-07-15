@@ -17,8 +17,8 @@ Primary.args = {
   mode: 'primary',
   children: 'Button',
   isActive: false,
-  disabled: false,
   colorScheme: 'pink',
+  // isDisabled:true,
   w:32,
   onClick: () => {
     alert(111)
@@ -36,7 +36,7 @@ export const Tertiary = Template.bind({});
 Tertiary.args = {
   mode: 'tertiary',
   size: 'lg',
-  colorScheme: 'blue',
+  colorScheme: 'yellow',
   // isDisabled: true,
   children: 'Button',
 };
@@ -46,6 +46,6 @@ Text.args = {
   mode: 'text',
   size: 'lg',
   children: 'Button',
-  colorScheme: 'red',
+  colorScheme: 'orange',
   // isDisabled: true,
 }
