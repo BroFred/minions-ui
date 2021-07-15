@@ -7,22 +7,26 @@ export interface SelectProps {
         }[];
         currentSelection: string | number[];
     };
-    setSelect: (param: object) => void;
+    setSelect: (param: object | string) => void;
 }
-interface LayoutSelectProps extends SelectProps {
+interface SelectLayoutProps extends SelectProps {
     children: ((arg: any) => React.ReactNode[])[];
 }
-interface MultipleSelectProps extends SelectProps {
+interface SelectHeaderProps extends SelectProps {
     placeholder?: string;
 }
-interface MultipleOptionProps extends SelectProps {
+interface SelectOptionProps extends SelectProps {
     value: string;
     label: string;
-    currentSelection: number[];
+    currentSelection: string | number[];
 }
 export declare const MultipleSelect: {
-    ({ select, setSelect, placeholder }: MultipleSelectProps): JSX.Element;
-    Option({ value, label, currentSelection, setSelect }: MultipleOptionProps): JSX.Element;
+    ({ select, setSelect, placeholder }: SelectHeaderProps): JSX.Element;
+    Option({ value, label, currentSelection, setSelect }: SelectOptionProps): JSX.Element;
 };
-export declare const SelectLayout: ({ select, children, setSelect, ...others }: LayoutSelectProps) => JSX.Element;
+export declare const SelectLayout: ({ select, children, setSelect, ...others }: SelectLayoutProps) => JSX.Element;
+export declare const SingleSelect: {
+    ({ select, placeholder }: SelectHeaderProps): JSX.Element;
+    Option({ value, label, setSelect, currentSelection }: SelectOptionProps): JSX.Element;
+};
 export default MultipleSelect;
