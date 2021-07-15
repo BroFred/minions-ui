@@ -5,11 +5,11 @@ import { always } from 'ramda';
 always(undefined);
 
 export interface ScrollBottomTriggerProps {
-    height: string;
+    maxHeight: string;
     scrollBottomCallback?: any;
 }
 
-const ScrollBottomTrigger: React.FC<ScrollBottomTriggerProps> = ({height = '300px', scrollBottomCallback, children}) => {
+const ScrollBottomTrigger: React.FC<ScrollBottomTriggerProps> = ({maxHeight = '300px', scrollBottomCallback, children}) => {
     const containerRef = useRef<HTMLDivElement| null>(null)
     const handleScroll = () => {
         const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
@@ -18,7 +18,7 @@ const ScrollBottomTrigger: React.FC<ScrollBottomTriggerProps> = ({height = '300p
           }
     }
 
-    return <Box ref={containerRef} overflow='auto' height={height} onScroll={handleScroll
+    return <Box ref={containerRef} overflow='auto' maxHeight={maxHeight} onScroll={handleScroll
     }>
         {children}
     </Box>

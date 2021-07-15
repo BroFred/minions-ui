@@ -1,4 +1,4 @@
-import { extendTheme } from '@chakra-ui/react';
+import { extendTheme, withDefaultColorScheme } from '@chakra-ui/react';
 import colors from './color';
 import shadows from './shadow';
 import { ButtonTheme as Button } from '@minion-ui/button';
@@ -14,4 +14,9 @@ const overrides = {
     Pagination,
   },
 }
-export default extendTheme(overrides)
+// 给Button组件添加默认colorScheme，否则默认是gray
+const defaultColorScheme = withDefaultColorScheme({
+  colorScheme: 'blue',
+  components: ['Button']
+})
+export default extendTheme(overrides, defaultColorScheme)

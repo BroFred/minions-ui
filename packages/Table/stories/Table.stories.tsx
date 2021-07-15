@@ -1,10 +1,10 @@
 import { ThSort, TdPure, ThSortProps, ThRow, Table, ThPure, TdCollapsed } from '../src/Table';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Story, Meta } from '@storybook/react';
 import { map, range, addIndex, takeWhile, repeat } from 'ramda';
 import {
     IconButton,
-    Box
+    Box,
 } from "@chakra-ui/react"
 import { ChevronDownIcon } from '@chakra-ui/icons'
 
@@ -86,7 +86,9 @@ const Template: Story<ThSortProps> = (args) => {
         range(1, 15), range(1, 15), range(1, 15), range(1, 15), range(1, 15), range(1, 15), range(1, 15)
     ];
     const mapWithIndex = addIndex(map);
-    return <Table strip columns={columns} data={data} template="even">
+
+    return <Box>
+        <Table strip columns={columns} data={data} template="even">
         {
             (cols) => map(({ columnName, column }) => <Box position="sticky"><ThSort key={column} sort={[sort, setSort]} sortKey={column}>{columnName}</ThSort></Box>, cols)
         }
@@ -96,6 +98,7 @@ const Template: Story<ThSortProps> = (args) => {
                 d)
         }
     </Table>
+    </Box>
 };
 
 export const Sort = Template.bind({});

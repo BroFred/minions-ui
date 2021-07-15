@@ -4,8 +4,9 @@ import {
     Box,
     GridItem,
     Grid,
+    useColorModeValue
 } from "@chakra-ui/react"
-import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { TriangleUpIcon, TriangleDownIcon } from '@chakra-ui/icons';
 import { reduce, range, sum, take } from 'ramda';
 import { useResizeDetector } from 'react-resize-detector';
 
@@ -64,7 +65,7 @@ const getH = (size: size): number => {
             return 10;
     }
 }
-export const CellContainer = ({ children, textAlign = "left" }: { children: React.ReactNode, textAlign: textAlign }): JSX.Element => {
+export const CellContainer = ({ children, textAlign = "left" }: { children: React.ReactNode, textAlign: textAlign} ): JSX.Element => {
     return <Box textAlign={textAlign} textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" mx="2" minW="12" maxW="96">{children}</Box>;
 };
 
@@ -83,7 +84,7 @@ export const ThPure = ({ children, size, textAlign, resize, resizeId="" }: Table
             }
         }
     });
-    return <Flex ref={ref} resize={resize? "horizontal" : "none"} overflow="auto" className="cell" alignItems="center" bg={'nl.08'} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor="nl.05">
+    return <Flex ref={ref} resize={resize? "horizontal" : "none"} overflow="auto" className="cell" alignItems="center" bg={useColorModeValue('nl.200', 'nd.600')} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor={useColorModeValue('nl.400', 'nd.500')} color={useColorModeValue('nl.700', 'nd.100')}>
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
     </Flex>
 }
@@ -99,19 +100,19 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
         return isSortedDesc === value ? undefined : value;
     }
     const h = getH(size);
-    return <Flex className="cell" alignItems="center" bg={'nl.08'} outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}>
+    return <Flex className="cell" alignItems="center" bg={ useColorModeValue('nl.200', 'nd.600')} outline="1px solid" outlineColor={useColorModeValue('nl.400', 'nd.500')} justifyContent={justifyContent} h={h} color={useColorModeValue('nl.700', 'nd.100')}>
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
         <Flex width="4" mx="2" flexDirection="column">
             <Box onClick={() => setIsSortedDesc({
                 sortKey,
                 isSortedDesc: setSorted(false)
             })}
-                borderRadius="full"
                 _hover={{
-                    bg: 'nl.05'
+                    color: useColorModeValue('nl.700', 'nd.100'),
+                    cursor: 'pointer',
                 }}
-                aria-label="table sort" h={4} w={4} lineHeight="0" color={(isSelfSorting && isSortedDesc === false) ? 'pri.01' : 'nl.01'} >
-                <ChevronUpIcon h={4} w={4} />
+                aria-label="table sort" h={2.5} w={2.5} lineHeight="0" color={(isSelfSorting && isSortedDesc === false) ? (useColorModeValue('nl.700', 'nd.100')) :  (useColorModeValue('nl.500', 'nd.300'))} >
+                <TriangleUpIcon h={2.5} w={2.5} />
             </Box>
             <Box onClick={() => setIsSortedDesc(
                 {
@@ -119,12 +120,12 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
                     isSortedDesc: setSorted(true)
                 }
             )}
-                borderRadius="full"
                 _hover={{
-                    bg: 'nl.05'
+                    color: useColorModeValue('nl.700', 'nd.100'),
+                    cursor: 'pointer',
                 }}
-                aria-label="table sort" h={4} w={4} lineHeight="0" color={(isSelfSorting && isSortedDesc === true) ? 'pri.01' : 'nl.01'}>
-                <ChevronDownIcon h={4} w={4} />
+                aria-label="table sort" h={2.5} w={2.5} lineHeight="0" color={(isSelfSorting && isSortedDesc === true) ? (useColorModeValue('nl.700', 'nd.100')) : (useColorModeValue('nl.500', 'nd.300'))}>
+                <TriangleDownIcon h={2.5} w={2.5} />
             </Box>
         </Flex>
     </Flex>
@@ -133,13 +134,13 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
 export const TdPure = ({ children, size, textAlign }: TableText) => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
-    return <GridItem bg="white" className="cell"><Flex alignItems="center" outline="1px solid" outlineColor="nl.05" justifyContent={justifyContent} h={h}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
+    return <GridItem bg={useColorModeValue('nd.50', 'nd.900')} className="cell"><Flex alignItems="center" outline="1px solid" outlineColor={useColorModeValue('nl.300', 'nd.600')} justifyContent={justifyContent} h={h} color={useColorModeValue('nl.700', 'nd.200')}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
 }
 
 export const TdCollapsed = ({ children, row, show }: TdCollapsedProps) => {
     return (<>
         {show &&
-            [<GridItem bg="white" gridColumn="1/-1"><Box outline="1px solid" outlineColor="nl.05">{children(row)}</Box></GridItem >]
+            [<GridItem bg={useColorModeValue('nd.50', 'nd.900')} gridColumn="1/-1"><Box outline="1px solid" outlineColor={useColorModeValue('nl.300', 'nd.600')} color={useColorModeValue('nl.700', 'nd.200')}>{children(row)}</Box></GridItem >]
         }
     </>);
 }
@@ -169,7 +170,7 @@ export const Table = ({ children, strip = false, columns = [], data = [], templa
         return {
             ...aggregate,
             [`*:nth-of-type(${2 * columnLen}n - ${offset + compensation})`]: {
-                background: 'nl.09',
+                background: useColorModeValue('nl.100', 'nd.800'),
             }
         }
     },

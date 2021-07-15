@@ -47,7 +47,8 @@ const WrapTableTemplate: Story = () => {
             }
     }
 
-    return <ScrollBottomTrigger height='300px' scrollBottomCallback={scrollBottomCallback}> 
+    return <ScrollBottomTrigger maxHeight='300px' scrollBottomCallback={scrollBottomCallback}>
+        <Box>
         <Table strip columns={columns} data={data} template="even" showRange={showRange}  enableCollapse={false}>
         {
             (cols) => map(({ columnName, column }) => <Box position="sticky"><ThSort key={column} sort={[sort, setSort]} sortKey={column}>{columnName}</ThSort></Box>, cols)
@@ -58,6 +59,7 @@ const WrapTableTemplate: Story = () => {
                 d)
         }
     </Table>
+    </Box>
     </ScrollBottomTrigger>
 }
 

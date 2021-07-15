@@ -1,7 +1,7 @@
 import React from 'react';
 
 export interface ScrollBottomTriggerProps {
-    height: number | string;
+    maxHeight: number | string;
     scrollBottomCallback?: any;
 }
 

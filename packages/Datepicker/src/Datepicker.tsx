@@ -74,19 +74,24 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
         }
         {
             dataPrefixArray.length <= 6 &&
-            map((d) => <Square w="3rem" h="3rem"><Button w="3rem" variant="link" key={d}>{d}</Button></Square>, dataPrefixArray)
+            map((d) => <Square w="3rem" h="3rem"><Button w="3rem" variant="link" key={d} colorScheme='gray'>{d}</Button></Square>, dataPrefixArray)
         }
         {
-            map((d) => <Square w="3rem" h="3rem" border={
-                dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? '1px solid grey' : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? '1px solid' : 'none'}`
-            } ><Button w="3rem"
+            map((d) => <Square w="3rem" h="3rem" 
+            // border={
+            //     dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? '1px solid grey' : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? '1px solid' : 'none'}`
+            // } 
+            bg={
+                dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? 'blue.50' : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? 'blue.200' : 'nd.50'}`
+            }><Button w="3rem"
                 disabled={disableFunc(`${y}-${m}-${d}`)}
+                colorScheme='gray'
                 onClick={() => {
                     onSelectedDateChange([y, m, d].join('-'))
                 }} variant="link" key={d}>{d}</Button></Square>, range(1, lastDayOfMonth.date() + 1))
         }
         {dateSuffixArray.length <= 6 &&
-            map((d) => <Square w="3rem" h="3rem"><Button w="3rem" variant="link" key={d}>{d}</Button></Square>, dateSuffixArray)
+            map((d) => <Square w="3rem" h="3rem"><Button w="3rem" variant="link" key={d} colorScheme='gray'>{d}</Button></Square>, dateSuffixArray)
         }
     </Grid>
 }
@@ -124,8 +129,8 @@ export const GoToMonthYear = ({ direction, step = 1, date: { selectedDate, onSel
         const newDate = direction === 'backward' ? dayjs(selectedDate).subtract(1, 'year').endOf('month') : dayjs(selectedDate).add(1, 'year').startOf('month');
         onSelectedDateChange(newDate.format('YYYY-MM-DD'));
     }
-    const icon = direction === 'backward' ? <Flex><IconButton disabled={disabledYear} variant="link" aria-label="go-to-year" icon={<ArrowLeftIcon />} onClick={onYearChange} /><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" onClick={onMonthChange} icon={<ChevronLeftIcon fontSize="1.7rem" />} /></Flex> :
-        <Flex><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" onClick={onMonthChange} icon={<ChevronRightIcon fontSize="1.7rem" />} /><IconButton variant="link" aria-label="go-to-year" icon={<ArrowRightIcon />} disabled={disabledYear} onClick={onYearChange} /></Flex>
+    const icon = direction === 'backward' ? <Flex><IconButton disabled={disabledYear} variant="link" aria-label="go-to-year" icon={<ArrowLeftIcon />} colorScheme='gray' onClick={onYearChange} /><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' onClick={onMonthChange} icon={<ChevronLeftIcon fontSize="1.7rem" />} /></Flex> :
+        <Flex><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' onClick={onMonthChange} icon={<ChevronRightIcon fontSize="1.7rem" />} /><IconButton variant="link" aria-label="go-to-year" icon={<ArrowRightIcon />} disabled={disabledYear} colorScheme='gray' onClick={onYearChange} /></Flex>
 
     return <Square w="3rem" h="3rem">{icon}</Square>
 }
