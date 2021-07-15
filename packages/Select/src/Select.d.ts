@@ -10,6 +10,8 @@ export interface SelectProps {
     setSelect: (param: object | string) => void;
 }
 interface SelectLayoutProps extends SelectProps {
+    width?: string;
+    height?: string;
     children: ((arg: any) => React.ReactNode[])[];
 }
 interface SelectHeaderProps extends SelectProps {
@@ -24,7 +26,7 @@ export declare const MultipleSelect: {
     ({ select, setSelect, placeholder }: SelectHeaderProps): JSX.Element;
     Option({ value, label, currentSelection, setSelect }: SelectOptionProps): JSX.Element;
 };
-export declare const SelectLayout: ({ select, children, setSelect, ...others }: SelectLayoutProps) => JSX.Element;
+export declare const SelectLayout: ({ select, children, setSelect, width, height }: SelectLayoutProps) => JSX.Element;
 export declare const SingleSelect: {
     ({ select, placeholder }: SelectHeaderProps): JSX.Element;
     Option({ value, label, setSelect, currentSelection }: SelectOptionProps): JSX.Element;

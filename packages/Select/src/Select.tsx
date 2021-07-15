@@ -27,7 +27,9 @@ export interface SelectProps {
     setSelect: (param:object|string)=>void
 }
 interface SelectLayoutProps extends SelectProps{
-  children: ((arg: any) => React.ReactNode[])[];
+  width?: string,
+  height?: string,
+  children: ((arg: any) => React.ReactNode[])[],
 }
 interface SelectHeaderProps extends SelectProps {
   placeholder?: string,
@@ -90,7 +92,7 @@ MultipleSelect.Option = ({ value, label, currentSelection, setSelect }:SelectOpt
     </VStack>
 }
 
-export const SelectLayout = ({ select, children, setSelect,...others}: SelectLayoutProps) => {
+export const SelectLayout = ({ select, children, setSelect, width='15rem', height='3rem'}: SelectLayoutProps) => {
     const initialFocusRef = React.useRef();
     const insideRef = React.useRef();
     const [isShow, setIsShow] = useState(false);
@@ -107,11 +109,10 @@ export const SelectLayout = ({ select, children, setSelect,...others}: SelectLay
       <Box ref={insideRef} display="inline-block">
         <Popover isOpen={isShow} initialFocusRef={initialFocusRef} >
           <PopoverTrigger>
-              <Box width='12rem' {...others} p='0' onClick={() => setIsShow(!isShow)}  ref={initialFocusRef} >
-                <Flex position='relative' bg={selectHeaderBg} justifyContent="flex-start" alignItems='center' cursor='pointer' pl='0.875rem' pr='2rem' py='0.375rem' borderRadius='4' 
-                    onClick={()=>{setSelect({ ...select })}}>
+              <Box width={width} minHeight={height} p='0' onClick={() => setIsShow(!isShow)}  ref={initialFocusRef} >
+                <Flex minHeight={height} height='full' position='relative' bg={selectHeaderBg} justifyContent="space-between" alignItems='center' cursor='pointer' pl='0.875rem' pr='1.25rem' py='0.375rem' borderRadius='4'>
                       {children[0](select, setSelect)}
-                      <Box position='absolute' right='1.25rem' top='1rem' fontSize='12' color={selectHeaderColor}>
+                      <Box color={selectHeaderColor} fontSize='12'>
                       {
                           isShow ? <TriangleUpIcon /> : <TriangleDownIcon />
                       }
@@ -120,8 +121,7 @@ export const SelectLayout = ({ select, children, setSelect,...others}: SelectLay
               </Box>
           </PopoverTrigger>
           <PopoverContent 
-            width='12rem'
-            {...others} 
+            width={width}
             _focus={{
             boxShadow: 'none',
             }}>
@@ -136,7 +136,7 @@ export const SingleSelect = ({ select, placeholder ='选择内容' }: SelectHead
   const { currentSelection, items } = select;
   const currentElem = find(propEq('value', currentSelection))(items)
   const headTextColor = useColorModeValue('nl.700', 'nd.200');
-  return (<Flex h='2.375rem' color={headTextColor} fontSize={14} alignItems='center'>{currentElem ? currentElem.label : placeholder}</Flex>)
+  return (<Flex h='full' color={headTextColor} fontSize={14} alignItems='center'>{currentElem ? currentElem.label : placeholder}</Flex>)
 }
 
 

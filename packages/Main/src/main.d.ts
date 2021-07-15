@@ -3,11 +3,13 @@ import Pagination from '@minion-ui/pagination';
 import { Table, TdPure, ThSort, ThPure } from '@minion-ui/table';
 import Modal from '@minio-ui/modal';
 import theme from '@minion-ui/theme';
+import { SelectLayout, SingleSelect, MultipleSelect } from '@minion-ui/select';
 
 export  {
     Button,
     Pagination,
     Modal,
     Table, TdPure, ThSort, ThPure,
-    theme
+    theme,
+    SelectLayout, SingleSelect, MultipleSelect,
 }
