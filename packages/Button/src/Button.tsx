@@ -7,7 +7,8 @@ always(undefined);
 type size = 'sm' | 'md' | 'lg';
 interface VariantProps {
   size: size;
-  colorMode: 'light' | 'dark',
+  colorMode: 'light' | 'dark';
+  colorScheme: string;
 }
 const getPaddings = (size: size):object => {
  const paddings = {
@@ -40,72 +41,80 @@ export const ButtonTheme = {
     primary: (props: VariantProps) => ({
       ...getPaddings(props.size),
       ...defaultStyle,
-      bg: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
-      color: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
+      bg: `${props.colorScheme}.500`,
+      color: 'nd.50',
       _hover:{
-       bg: props.colorMode === 'light' ? 'pri.02' : 'pri.02',
+       bg: `${props.colorScheme}.300`,
       },
       _active: {
-        bg: props.colorMode === 'light' ? 'pri.03' : 'pri.03',
+        bg: `${props.colorScheme}.700`,
+        color: props.colorMode === 'light' ? 'nd.50' : 'nd.100'
       },
       _disabled: {
         pointerEvents: 'none',
-        bg: props.colorMode === 'light' ? 'nl.06': 'nl.06',
-        color: props.colorMode === 'light' ? 'nl.04' : 'nl.04',
+        bg: props.colorMode === 'light' ? 'nl.200': 'nd.700',
+        color: props.colorMode === 'light' ? 'nl.400' : 'nd.500',
         opacity: 1,
       }
     }),
     secondary: (props: VariantProps) => ({
       ...getPaddings(props.size),
       ...defaultStyle,
-      bg: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
-      color: props.colorMode === 'light' ? 'nl.03' : 'nl.03',
+      bg: props.colorMode === 'light' ? 'nd.50' : 'nd.900',
+      color: props.colorMode === 'light' ? 'nl.700' : 'nd.300',
       borderWidth: '0.063rem',
-      borderColor: props.colorMode === 'light' ? 'nl.03' : 'nl.03',
+      borderColor: props.colorMode === 'light' ? 'nl.600' : 'nd.300',
       borderStyle: 'solid',
       _hover:{
-        bg: props.colorMode === 'light' ? 'nl.11' : 'nl.11',
+        bg: props.colorMode === 'light' ? `${props.colorScheme}.50` : 'nd.600' ,
+        color: props.colorMode === 'light' ? 'nl.600' : 'nd.300'
       },
       _active: {
-        bg: props.colorMode === 'light' ? 'nl.12' : 'nl.12',
+        bg: props.colorMode === 'light' ? `${props.colorScheme}.100` : 'nd.500',
+        color: props.colorMode === 'light' ? 'nl.700' : 'nd.200',
+        borderColor: props.colorMode === 'light' ? 'nl.700' : 'nd.200',
       },
       _disabled: {
         pointerEvents: 'none',
-        bg: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
-        color: props.colorMode === 'light' ? 'nl.05' : 'nl.05',
-        borderColor: props.colorMode === 'light' ? 'nl.05' : 'nl.05',
+        bg: props.colorMode === 'light' ? 'nd.50' : 'nd.900',
+        color: props.colorMode === 'light' ? 'nl.400' : 'nd.500',
+        borderColor: props.colorMode === 'light' ? 'nl.400' : 'nd.500',
         opacity: 1,
-      }
+      },
     }),
-    tertiary: (props: VariantProps) => ({
-      ...getPaddings(props.size),
+    tertiary: (props: VariantProps) => {
+      return {...getPaddings(props.size),
       ...defaultStyle,
-      bg: 'nl.06',
-      color: props.colorMode === 'light' ? 'nl.02' : 'nl.02',
-      _hover:{
-        color: props.colorMode === 'light' ? 'pri.02' : 'pri.02',
+      bg: props.colorMode === 'light' ? 'nl.300' : 'nd.600',
+      color: props.colorMode === 'light' ? 'nl.700' : 'nd.200',
+      _hover: {
+        color: props.colorMode === 'light' ? `${props.colorScheme}.300` : 'nd.100',
+      },
+      _active: {
+        color: props.colorMode === 'light' ? `${props.colorScheme}.700` : 'nd.300'
       },
       _disabled: {
         pointerEvents: 'none',
-        color: props.colorMode === 'light' ? 'nl.04' : 'nl.04',
+        bg: props.colorMode === 'light' ? 'nl.200' : '#2C2E35',
+        color: props.colorMode === 'light' ? 'nl.400' : 'nd.400',
         opacity: 1,
-      }
-    }),
+      }}
+    },
     text: (props: VariantProps) => ({
       ...getPaddings(props.size),
       minWidth: '2rem',
       fontSize: '0.875rem',
       bg: 'transprent',
-      color: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
+      color: props.colorMode === 'light' ? `${props.colorScheme}.500` : 'nd.200',
       _hover:{
-        color: props.colorMode === 'light' ? 'pri.02' : 'pri.02',
+        color: props.colorMode === 'light' ? `${props.colorScheme}.300` : 'nd.100',
       },
       _active: {
-        color: props.colorMode === 'light' ? 'pri.03' : 'pri.03',
+        color: props.colorMode === 'light' ? `${props.colorScheme}.700` : 'nd.300',
       },
       _disabled: {
         pointerEvents: 'none',
-        color:  props.colorMode === 'light' ? 'nl.05' : 'nl.05',
+        color:  props.colorMode === 'light' ? 'nl.300' : 'nd.500',
         opacity: 1,
       }
     }),

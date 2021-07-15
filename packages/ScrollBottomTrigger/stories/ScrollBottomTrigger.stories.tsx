@@ -31,7 +31,7 @@ const WrapTableTemplate: Story = () => {
             column: 'd',
         }
     ];
-    const data = range(1, 21).map((_, index) => range(1 + index , 5 + index));
+    const data = range(1, 101).map((_, index) => range(1 + index , 5 + index));
     const height = 300;
     const lineHeigt = 40;
     const lines = Math.ceil(height / lineHeigt) + 1;
