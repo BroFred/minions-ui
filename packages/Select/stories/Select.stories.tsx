@@ -19,11 +19,10 @@ const MutliTemplate: Story<SelectProps> = (args) => {
 
         ],
     });
-    console.log('select',select)
     return (
         <SelectLayout select={select}  setSelect={setSelect} width='20rem'>
             {
-                (selection, setSelection) => <MultipleSelect select={selection} setSelect={setSelection}/>
+                (selection, setSelection) => <MultipleSelect select={selection} setSelect={setSelection} placeholder='请输入内容'/>
             }
             {
                (selection, setSelection) => map(({ value, label }) => <MultipleSelect.Option key={value} value={value} label={label} currentSelection={selection.currentSelection} setSelect={(v) => {
@@ -37,8 +36,8 @@ const MutliTemplate: Story<SelectProps> = (args) => {
     )
 }; 
 
-export const mutli = MutliTemplate.bind({});
-mutli.args = {
+export const multiple = MutliTemplate.bind({});
+multiple.args = {
 };
 
 const SingleTemplate: Story<SelectProps> = (args) => {
