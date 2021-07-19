@@ -125,9 +125,9 @@ export const ButtonTheme = {
       minWidth: '1.5rem',
       height: '1.5rem',
       textAlign: 'center',
-      padding: '0.312rem 0.25rem',
+      padding: '0.375rem 0.25rem',
       _active: {
-        borderWidth: '0.063rem',
+        borderWidth: '0.0625rem',
         borderColor:  useColorModeValue('blue.500', 'blue.300'),
         borderStyle: 'solid',
         color: useColorModeValue('blue.500', 'blue.300'),

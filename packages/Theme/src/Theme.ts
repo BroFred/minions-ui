@@ -8,10 +8,10 @@ import { always } from 'ramda';
 
 always(undefined);
 const breakpoints = createBreakpoints({
-  sm: '920px',
-  md: '1440px',
-  lg: '1920px',
-  xl: '2326px',
+  sm: '57.5rem',
+  md: '90rem',
+  lg: '120rem',
+  xl: '145.375rem',
 })
 const sizes = {
   container: {
