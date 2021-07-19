@@ -13,10 +13,17 @@ const breakpoints = createBreakpoints({
   lg: '1920px',
   xl: '2326px',
 })
+const sizes = {
+  container: {
+    sm: '18rem',
+    md: '30rem'
+  }
+}
 const overrides = {
   colors,
   shadows,
-  breakpoints: breakpoints,
+  sizes,
+  breakpoints,
   components: {
     Button,
     Pagination,
