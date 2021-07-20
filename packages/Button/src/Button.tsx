@@ -119,19 +119,26 @@ export const ButtonTheme = {
       }
     }),
     'secondary-outline': (props: VariantProps) => ({
-      bg: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
-      color: props.colorMode === 'light' ? 'nl.02' : 'nl.02',
+      bg: 'transprent',
+      color: useColorModeValue('blue.400', 'blue.300'), 
       borderRadius: '0.25rem',
-      borderWidth: '0.063rem',
-      borderColor: props.colorMode === 'light' ? 'nl.05' : 'nl.05',
-      borderStyle: 'solid',
-      minWidth: '2rem',
-      minHeight: '2rem',
+      minWidth: '1.5rem',
+      height: '1.5rem',
       textAlign: 'center',
-      padding: '0.312rem 0.25rem',
+      padding: '0.375rem 0.25rem',
       _active: {
-        borderColor: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
-        color: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
+        borderWidth: '0.0625rem',
+        borderColor:  useColorModeValue('blue.500', 'blue.300'),
+        borderStyle: 'solid',
+        color: useColorModeValue('blue.500', 'blue.300'),
+        bg: useColorModeValue('blue.50', 'blue.800'),
+        _hover: {
+          bg: useColorModeValue('blue.100', 'blue.700'),
+        }
+      },
+      _hover: {
+        color: useColorModeValue('blue.400', 'blue.300'),
+        bg: useColorModeValue('nl.200', 'nd.600')
       }
     })
   },
