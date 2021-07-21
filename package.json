@@ -1,6 +1,6 @@
 {
   "name": "minion-ui",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "",
   "main": "packages/Main/lib/main.js",
   "types": "packages/Main/lib/main.d.ts",
