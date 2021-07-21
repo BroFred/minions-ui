@@ -26,11 +26,14 @@ Basic.args = {
 const RangeTemplate: Story<RangeSelectorProps> = () => {
     const [selectedStartDate, onSelectedStartDateChange] = useState('1995-10-15');
     const [selectedEndDate, onSelectedEndDateChange] = useState('1995-10-31');
-    return <Flex justifyContent="space-around"><RangeSelector startDate={{
+    return <>
+        <Flex justifyContent="space-around"><RangeSelector startDate={{
         selectedDate: selectedStartDate, onSelectedDateChange: onSelectedStartDateChange
     }} endDate={{
         selectedDate: selectedEndDate, onSelectedDateChange: onSelectedEndDateChange
     }} /></Flex>
+    {selectedStartDate}---{selectedEndDate}
+    </>
 }
 
 export const BasicRange = RangeTemplate.bind({});

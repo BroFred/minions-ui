@@ -1,3 +1,4 @@
+import React from 'react'
 import {
     Grid, Square, Heading, Flex, IconButton, VStack, HStack, NumberInput,
     NumberInputField, Text,
@@ -5,6 +6,7 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
     Box,
+    useColorModeValue,
 } from '@chakra-ui/react';
 import { map, range } from 'ramda';
 import dayjs from 'dayjs';
@@ -53,6 +55,13 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
     const dateSuffix = lastDayOfMonth.add(currentWeekday, 'day').date();
     const dateSuffixArray = range(lastDayOfMonth.add(1, 'day').date(), dateSuffix + 1);
 
+    const containerBg = useColorModeValue('nd.50', 'nd.600');
+    const textColor = useColorModeValue('nl.700', 'nd.200');
+    const textPreSuffixColor = useColorModeValue('nl.300', 'nd.500')
+    const textInRangeColor = useColorModeValue('nd.50', 'nd.200');
+    const headAndTailBg = 'blue.500';
+    const inRangeBg = useColorModeValue('blue.200', 'nd.700');
+
     let dateRange = [selectedDate, selectedDate];
     let disableFunc: (d: undefined | string) => boolean = () => !!(rangeStartDate || rangeEndDate);
     if (rangeStartDate || rangeEndDate) {
@@ -68,13 +77,13 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
     }
 
     const [y, m] = selectedDate.split('-');
-    return <Grid templateColumns={`repeat(${weekdays.length}, 1fr)`} gap={6}>
+    return <Grid templateColumns={`repeat(${weekdays.length}, 1fr)`} gap={6} padding='1rem 2rem 2rem'>
         {
             map((d) => <Square w="3rem" h="3rem" key={d}>{d}</Square>, weekdays)
         }
         {
             dataPrefixArray.length <= 6 &&
-            map((d) => <Square w="3rem" h="3rem"><Button w="3rem" variant="link" key={d} colorScheme='gray'>{d}</Button></Square>, dataPrefixArray)
+            map((d) => <Square w="3rem" h="3rem"><Button disabled w="3rem" variant="link" key={d} colorScheme='gray' color={textPreSuffixColor} opacity='1 !important'>{d}</Button></Square>, dataPrefixArray)
         }
         {
             map((d) => <Square w="3rem" h="3rem" 
@@ -82,16 +91,19 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
             //     dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? '1px solid grey' : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? '1px solid' : 'none'}`
             // } 
             bg={
-                dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? 'blue.50' : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? 'blue.200' : 'nd.50'}`
-            }><Button w="3rem"
+                dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? inRangeBg : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? headAndTailBg : containerBg}`
+            }
+            ><Button w="3rem"
                 disabled={disableFunc(`${y}-${m}-${d}`)}
                 colorScheme='gray'
                 onClick={() => {
                     onSelectedDateChange([y, m, d].join('-'))
-                }} variant="link" key={d}>{d}</Button></Square>, range(1, lastDayOfMonth.date() + 1))
+                }} 
+                color={dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? textInRangeColor : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? textInRangeColor : disableFunc(`${y}-${m}-${d}`) ? textPreSuffixColor : textColor}`}
+                variant="link" opacity='1 !important' key={d}>{d}</Button></Square>, range(1, lastDayOfMonth.date() + 1))
         }
         {dateSuffixArray.length <= 6 &&
-            map((d) => <Square w="3rem" h="3rem"><Button w="3rem" variant="link" key={d} colorScheme='gray'>{d}</Button></Square>, dateSuffixArray)
+            map((d) => <Square w="3rem" h="3rem"><Button disabled w="3rem" variant="link" key={d} colorScheme='gray' color={textPreSuffixColor} opacity='1 !important'>{d}</Button></Square>, dateSuffixArray)
         }
     </Grid>
 }
@@ -105,7 +117,8 @@ export const ShowYearAndMonth = ({ selectedDate }: { selectedDate: string; }): J
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-    return <Heading w="15rem" size="md" textAlign="center">{`${monthNames[month]} ${date} ${year}`}</Heading>
+    const yearAndMonthColor = useColorModeValue('nl.900', 'nd.100');
+    return <Heading w="15rem" size="md" textAlign="center" color={yearAndMonthColor}>{`${monthNames[month]} ${date} ${year}`}</Heading>
 }
 
 
@@ -129,15 +142,18 @@ export const GoToMonthYear = ({ direction, step = 1, date: { selectedDate, onSel
         const newDate = direction === 'backward' ? dayjs(selectedDate).subtract(1, 'year').endOf('month') : dayjs(selectedDate).add(1, 'year').startOf('month');
         onSelectedDateChange(newDate.format('YYYY-MM-DD'));
     }
-    const icon = direction === 'backward' ? <Flex><IconButton disabled={disabledYear} variant="link" aria-label="go-to-year" icon={<ArrowLeftIcon />} colorScheme='gray' onClick={onYearChange} /><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' onClick={onMonthChange} icon={<ChevronLeftIcon fontSize="1.7rem" />} /></Flex> :
-        <Flex><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' onClick={onMonthChange} icon={<ChevronRightIcon fontSize="1.7rem" />} /><IconButton variant="link" aria-label="go-to-year" icon={<ArrowRightIcon />} disabled={disabledYear} colorScheme='gray' onClick={onYearChange} /></Flex>
+    const goToYearColor = useColorModeValue('nl.900', 'nd.100');
+    const goToMonthColor = useColorModeValue('nl.700', 'nd.200');
+    const icon = direction === 'backward' ? <Flex><IconButton disabled={disabledYear} variant="link" aria-label="go-to-year" color={goToYearColor} icon={<ArrowLeftIcon />} colorScheme='gray' onClick={onYearChange} /><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' onClick={onMonthChange} color={goToMonthColor} icon={<ChevronLeftIcon fontSize="1.7rem" />} /></Flex> :
+        <Flex><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' color={goToMonthColor} onClick={onMonthChange}  icon={<ChevronRightIcon fontSize="1.7rem" />} /><IconButton variant="link" aria-label="go-to-year" icon={<ArrowRightIcon />} disabled={disabledYear} colorScheme='gray' onClick={onYearChange} color={goToYearColor} /></Flex>
 
     return <Square w="3rem" h="3rem">{icon}</Square>
 }
 
 export const RangeSelector = ({ startDate, endDate }: RangeSelectorProps): JSX.Element => {
+    const containerBg = useColorModeValue('nd.50', 'nd.600');
     return <>
-        <VStack>
+        <VStack bgColor={containerBg}>
             <HStack spacing="2rem">
                 <GoToMonthYear direction="backward" date={startDate} />
                 <ShowYearAndMonth selectedDate={startDate.selectedDate} />
@@ -145,7 +161,7 @@ export const RangeSelector = ({ startDate, endDate }: RangeSelectorProps): JSX.E
             </HStack>
             <DateContainer date={startDate} rangeEndDate={endDate.selectedDate}></DateContainer>
         </VStack>
-        <VStack>
+        <VStack bgColor={containerBg}>
             <HStack spacing="2rem">
                 <GoToMonthYear direction="backward" date={endDate} limitDate={startDate.selectedDate} />
                 <ShowYearAndMonth selectedDate={endDate.selectedDate} />
