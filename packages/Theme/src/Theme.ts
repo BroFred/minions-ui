@@ -16,7 +16,7 @@ const overrides = {
 }
 // 给Button组件添加默认colorScheme，否则默认是gray
 const defaultColorScheme = withDefaultColorScheme({
-  colorScheme: 'blue',
+  colorScheme: 'nl',
   components: ['Button']
 })
 export default extendTheme(overrides, defaultColorScheme)

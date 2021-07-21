@@ -58,80 +58,94 @@ export const ButtonTheme = {
       }
     }),
     secondary: (props: VariantProps) => ({
-      ...getPaddings(props.size),
-      ...defaultStyle,
-      bg: useColorModeValue('nd.50', 'nd.900'),
-      color: useColorModeValue('nl.700', 'nd.300'),
-      borderWidth: '0.063rem',
-      borderColor: useColorModeValue('nl.600', 'nd.300'),
-      borderStyle: 'solid',
-      _hover:{
-        bg: useColorModeValue(`${props.colorScheme}.50`, 'nd.600'),
-        color: useColorModeValue('nl.600', 'nd.300'),
-      },
-      _active: {
-        bg: useColorModeValue(`${props.colorScheme}.100`, 'nd.500'),
-        color: useColorModeValue('nl.700', 'nd.200'),
-        borderColor: useColorModeValue('nl.700', 'nd.200'),
-      },
-      _disabled: {
-        pointerEvents: 'none',
+        ...getPaddings(props.size),
+        ...defaultStyle,
         bg: useColorModeValue('nd.50', 'nd.900'),
-        color: useColorModeValue('nl.400', 'nd.500'),
-        borderColor: useColorModeValue('nl.400', 'nd.500'),
-        opacity: 1,
-      },
+        color: useColorModeValue('nl.700', 'nd.300'),
+        borderWidth: '0.063rem',
+        borderColor: useColorModeValue('nl.600', 'nd.300'),
+        borderStyle: 'solid',
+        _hover:{
+          bg: useColorModeValue('nl.200', 'nd.600'),
+          color: useColorModeValue('nl.600', 'nd.300'),
+          borderColor: useColorModeValue('nl.600', 'nd.300'),
+        },
+        _active: {
+          bg: useColorModeValue('nl.300', 'nd.500'),
+          color: useColorModeValue('nl.600', 'nd.200'),
+          borderColor: useColorModeValue('nl.600', 'nd.200'),
+        },
+        _disabled: {
+          pointerEvents: 'none',
+          bg: useColorModeValue('nd.50', 'nd.900'),
+          color: useColorModeValue('nl.400', 'nd.500'),
+          borderColor: useColorModeValue('nl.400', 'nd.500'),
+          opacity: 1,
+        },
     }),
     tertiary: (props: VariantProps) => {
+      const colorScheme = props.colorScheme
+      const darkColorScheme = colorScheme === 'nl' ? 'nd': props.colorScheme
       return {...getPaddings(props.size),
       ...defaultStyle,
-      bg: useColorModeValue('nl.300', 'nd.600'),
+      bg: useColorModeValue(`${colorScheme}.200`, `${darkColorScheme}.600`),
       color: useColorModeValue('nl.700', 'nd.200'),
       _hover: {
-        color: useColorModeValue(`${props.colorScheme}.300`, 'nd.100'),
+        bg: useColorModeValue(`${colorScheme}.300`, `${darkColorScheme}.500`),
       },
       _active: {
-        color: useColorModeValue(`${props.colorScheme}.700`, 'nd.300'),
+        bg: useColorModeValue(`${colorScheme}.400`, `${darkColorScheme}.700`),
       },
       _disabled: {
         pointerEvents: 'none',
-        bg: useColorModeValue('nl.200', 'nd.700'),
-        color: useColorModeValue('nl.400', 'nd.400'),
+        bg: useColorModeValue(`${colorScheme}.200`, `${darkColorScheme}.700`),
+        color: useColorModeValue('nl.400', 'nd.500'),
         opacity: 1,
       }}
     },
-    text: (props: VariantProps) => ({
-      ...getPaddings(props.size),
-      minWidth: '2rem',
-      fontSize: '0.875rem',
-      bg: 'transprent',
-      color: useColorModeValue(`${props.colorScheme}.500`, 'nd.200'),
-      _hover:{
-        color: useColorModeValue(`${props.colorScheme}.300`, 'nd.100'),
-      },
-      _active: {
-        color: useColorModeValue(`${props.colorScheme}.700`, 'nd.300'),
-      },
-      _disabled: {
-        pointerEvents: 'none',
-        color:  useColorModeValue('nl.300', 'nd.500'),
-        opacity: 1,
+    text: (props: VariantProps) => {
+      const colorScheme = props.colorScheme
+      const darkColorScheme = colorScheme === 'nl' ? 'nd': props.colorScheme
+      return {
+        ...getPaddings(props.size),
+        minWidth: '2rem',
+        fontSize: '0.875rem',
+        bg: 'transprent',
+        color: useColorModeValue(`${colorScheme}.600`, `${darkColorScheme}.300`),
+        _hover:{
+          color: useColorModeValue(`${colorScheme}.900`, `${darkColorScheme}.100`),
+        },
+        _active: {
+          color: useColorModeValue(`${colorScheme}.900`, `${darkColorScheme}.100`),
+        },
+        _disabled: {
+          pointerEvents: 'none',
+          color:  useColorModeValue(`${colorScheme}.300`, `${darkColorScheme}.500`),
+          opacity: 1,
+        }
       }
-    }),
-    'secondary-outline': (props: VariantProps) => ({
-      bg: props.colorMode === 'light' ? 'nl.13' : 'nl.13',
-      color: props.colorMode === 'light' ? 'nl.02' : 'nl.02',
+    },
+    'secondary-outline': () => ({
+      bg: 'transprent',
+      color: useColorModeValue('nl.600', 'nd.300'), 
       borderRadius: '0.25rem',
-      borderWidth: '0.063rem',
-      borderColor: props.colorMode === 'light' ? 'nl.05' : 'nl.05',
-      borderStyle: 'solid',
-      minWidth: '2rem',
-      minHeight: '2rem',
+      minWidth: '1.5rem',
+      height: '1.5rem',
       textAlign: 'center',
-      padding: '0.312rem 0.25rem',
+      padding: '0.375rem 0.25rem',
       _active: {
-        borderColor: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
-        color: props.colorMode === 'light' ? 'pri.01' : 'pri.01',
+        borderWidth: '0.0625rem',
+        borderColor:  useColorModeValue('blue.500', 'blue.300'),
+        borderStyle: 'solid',
+        color: useColorModeValue('blue.500', 'blue.300'),
+        bg: useColorModeValue('blue.50', 'blue.800'),
+        _hover: {
+          bg: useColorModeValue('blue.100', 'blue.700'),
+        }
+      },
+      _hover: {
+        color: useColorModeValue('nl.600', 'nd.300'),
+        bg: useColorModeValue('nl.200', 'nd.600')
       }
     })
   },
