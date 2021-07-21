@@ -1,6 +1,7 @@
 import { extendTheme, withDefaultColorScheme } from '@chakra-ui/react';
 import colors from './color';
 import shadows from './shadow';
+import styles from './global';
 import { ButtonTheme as Button } from '@minion-ui/button';
 import { paginationTheme as Pagination } from '@minion-ui/pagination';
 import { createBreakpoints } from '@chakra-ui/theme-tools';
@@ -20,6 +21,7 @@ const sizes = {
   }
 }
 const overrides = {
+  styles,
   colors,
   shadows,
   sizes,
