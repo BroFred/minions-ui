@@ -15,7 +15,7 @@ import {
     useColorModeValue
 } from '@chakra-ui/react';
 import Button,{ ButtonProps } from '@minion-ui/button';
-import { TriangleUpIcon,TriangleDownIcon } from '@chakra-ui/icons'
+import { TriangleUpIcon,TriangleDownIcon,SmallCloseIcon} from '@chakra-ui/icons'
 import { filter, map, propEq, find } from 'ramda';
 
 type size = 'sm' | 'md' | 'lg';
@@ -108,14 +108,14 @@ const getModeHoverStyle = (mode: string):object => {
   return mode === 'text' ? {} : hoverStyle
 }
 
-const getModeBgStyle = (mode: string):object => {
+const getModeBgStyle = (mode: string, selectHeaderBg:string):object => {
   const bgStyle = {
-    bg:useColorModeValue('nl.700', 'nd.600'),
+    bg: selectHeaderBg,
     '_hover':{
-      bg:useColorModeValue('nl.700', 'nd.600'),
+      bg: selectHeaderBg,
     },
     '_active':{
-      bg:useColorModeValue('nl.700', 'nd.600'),
+      bg: selectHeaderBg,
     }
   }
   return mode === 'text' ? {} : bgStyle
@@ -136,10 +136,12 @@ export const MultipleSelect = ({ select, setSelect, placeholder='选择内容'  
     return <Flex width='full' flexWrap="wrap">
         { currentSelection?.length ?
         map(
-          ({ value, label }) => <Tag h={getSizeStyle(defaultSize).tagH} mr="0.5rem" my={getSizeStyle(defaultSize).tagM} key={value} bg={TagBg} color={TagColor} cursor='pointer'><TagLabel>{label}</TagLabel><TagCloseButton color={TagCloseColor} onClick={(e) => {
+          ({ value, label }) => <Tag h={getSizeStyle(defaultSize).tagH} mr="0.5rem" my={getSizeStyle(defaultSize).tagM} key={value} bg={TagBg} color={TagColor} cursor='pointer'><TagLabel>{label}</TagLabel>
+          <SmallCloseIcon fontSize='12' ml='0.625rem' color={TagCloseColor} onClick={(e) => {
               e.stopPropagation();
               setSelect({ ...select, currentSelection: filter((v) => v !== value, currentSelection) })
-          }} /></Tag>
+          }}/>
+          </Tag>
           , currentElem
         )
           :
@@ -186,6 +188,7 @@ export const SelectLayout = ({ select, children, setSelect, width='15rem', size=
       selectHeaderColor = useColorModeValue('nl.300', 'nd.500');
     }
     const selectBodyBg = useColorModeValue('nl.13', 'nd.600');
+    const selectHeaderBg = useColorModeValue('nl.100', 'nd.600')
     useOutsideClick({
         ref: insideRef,
         handler: () => {
@@ -222,7 +225,7 @@ export const SelectLayout = ({ select, children, setSelect, width='15rem', size=
                   cursor='pointer'
                   fontWeight='normal'
                   borderRadius='4' 
-                  {...getModeBgStyle(mode)}
+                  {...getModeBgStyle( mode,selectHeaderBg )}
                   {...others}
                   isDisabled = {isDisabled}
                  >
