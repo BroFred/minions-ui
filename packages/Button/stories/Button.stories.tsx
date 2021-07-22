@@ -17,7 +17,7 @@ Primary.args = {
   mode: 'primary',
   children: 'Button',
   isActive: false,
-  colorScheme: 'pink',
+  colorScheme: 'blue',
   // isDisabled:true,
   w:32,
   onClick: () => {
@@ -28,7 +28,6 @@ Primary.args = {
 export const SecondaryWithIcon = IconTemplate.bind({});
 SecondaryWithIcon.args = {
   mode: 'secondary',
-  colorScheme: 'purple',
   size: 'lg',
 };
 
@@ -36,7 +35,6 @@ export const Tertiary = Template.bind({});
 Tertiary.args = {
   mode: 'tertiary',
   size: 'lg',
-  colorScheme: 'yellow',
   // isDisabled: true,
   children: 'Button',
 };
@@ -46,6 +44,5 @@ Text.args = {
   mode: 'text',
   size: 'lg',
   children: 'Button',
-  colorScheme: 'orange',
   // isDisabled: true,
 }
