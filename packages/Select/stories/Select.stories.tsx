@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react';
 import MultipleSelect, { SelectLayout, SingleSelect, SelectProps } from '../src/Select';
 import { map, filter } from 'ramda';
+import { TriangleUpIcon,TriangleDownIcon } from '@chakra-ui/icons'
 
 
 export default {
@@ -20,7 +21,7 @@ const MutliTemplate: Story<SelectProps> = (args) => {
         ],
     });
     return (
-        <SelectLayout select={select}  setSelect={setSelect}  width='25rem'>
+        <SelectLayout select={select}  setSelect={setSelect}  width='25rem' size='md'>
             {
                 (selection, setSelection) => <MultipleSelect select={selection} setSelect={setSelection} placeholder='请输入内容'/>
             }
@@ -46,12 +47,12 @@ const SingleTemplate: Story<SelectProps> = (args) => {
         items: [{ label: '英语',value: 'english' },{label: '中文',value: 'chinese'}, {label: '数学', value: 'math'}]
     })
     return (
-        <SelectLayout select={select} setSelect={setSelect} width='12rem' height='2rem'>
+        <SelectLayout select={select} setSelect={setSelect} width='12rem' >
             {
                 (selection) => <SingleSelect select={selection}/>
             }
             {
-               (selection, setSelection) => map(({ value, label }) => <SingleSelect.Option key={value} value={value} label={label} width='20rem' currentSelection={selection.currentSelection} setSelect={(v) => {
+               (selection, setSelection) => map(({ value, label }) => <SingleSelect.Option key={value} value={value} label={label} currentSelection={selection.currentSelection} setSelect={(v) => {
                 setSelection({
                     ...selection,
                     currentSelection: v
@@ -65,3 +66,33 @@ const SingleTemplate: Story<SelectProps> = (args) => {
 export const single = SingleTemplate.bind({});
 single.args = {
 };
+
+const TextTemplate: Story<SelectProps> = (args) => {
+    const [select, setSelect] = useState({
+        currentSelection: '',
+        items: [{ label: '英语',value: 'english' },{label: '中文',value: 'chinese'}, {label: '数学', value: 'math'}]
+    })
+    return (
+        <SelectLayout select={select} setSelect={setSelect} width='6rem' mode='text'>
+            {
+              (selection) => <SingleSelect select={selection}/>
+            }
+            {
+              (selection, setSelection) => map(({ value, label }) => <SingleSelect.Option key={value} value={value} label={label} currentSelection={selection.currentSelection} setSelect={(v) => {
+                setSelection({
+                    ...selection,
+                    currentSelection: v
+                })
+            }} />,  selection.items)
+            }
+            {
+              (isShow)=> isShow ? <TriangleUpIcon color='nl.500'/>: <TriangleDownIcon color='nl.500'/>
+            }
+        </SelectLayout>
+    )
+}
+
+export const text = TextTemplate.bind({});
+text.args = {
+};
+
