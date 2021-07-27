@@ -58,7 +58,7 @@ export const Modal:React.FC<ModalProps> = ({
     <CModal isOpen={isOpen} {...others} scrollBehavior={'inside'} trapFocus={false} >
       <ModalOverlay />
       <ModalContent boxShadow='16'>
-        <ModalHeader px='2rem' py='1rem' bg={useColorModeValue('nd.50', 'nd.600')} color={useColorModeValue('nl.900', 'nd.100')}  {...getSpecialCSS()}>{title}</ModalHeader>
+        <ModalHeader px='2rem' py='1rem' borderRadius='0.5rem' bg={useColorModeValue('nd.50', 'nd.600')} color={useColorModeValue('nl.900', 'nd.100')}  {...getSpecialCSS()}>{title}</ModalHeader>
         {hasClose && <ModalCloseButton right='2rem' />}
         <ModalBody px='2rem' py='1rem' fontSize='0.875rem' bg={useColorModeValue('nd.50', 'nd.600')} color={useColorModeValue('nl.700', 'nd.200')}>
           {content}
@@ -67,7 +67,7 @@ export const Modal:React.FC<ModalProps> = ({
           {extraFootInfo}
           <div>
             {!!cancelContent && <Button mode='secondary' onClick={cancelCallBack} mr='0.5rem' bg={useColorModeValue('nd.50', 'nd.800')} color={useColorModeValue('nl.600', 'nd.300')} _hover={{bg: useColorModeValue('nl.50', 'nd.600')}} _active={{bg: useColorModeValue('nl.100', 'nd.500')}} {...otherCancelBtn}>{cancelContent}</Button>}
-            <Button onClick={confirmCallBack} {...otherConfirm}>{confirmContent}</Button>
+            <Button colorScheme='blue' onClick={confirmCallBack} {...otherConfirm}>{confirmContent}</Button>
           </div>
         </ModalFooter>
       </ModalContent>
