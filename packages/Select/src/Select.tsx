@@ -246,7 +246,7 @@ export const SelectLayout = ({ select, children, setSelect, width='15rem', size=
             _focus={{
             boxShadow: 'none',
             }}>
-              <PopoverBody px='0' py='0' maxHeight='25rem' overflowY='scroll' bg={selectBodyBg} onClick={() => setIsShow(!isShow)}>{children[1](select, setSelect)}</PopoverBody>
+              <PopoverBody px='0' py='0' maxHeight='25rem' overflowY='auto' bg={selectBodyBg} onClick={() => setIsShow(!isShow)}>{children[1](select, setSelect)}</PopoverBody>
           </PopoverContent> : null
           }
         </Popover>

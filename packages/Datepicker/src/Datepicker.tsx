@@ -1,3 +1,4 @@
+import React, {useState, useEffect} from 'react'
 import {
     Grid, Square, Heading, Flex, IconButton, VStack, HStack, NumberInput,
     NumberInputField, Text,
@@ -5,18 +6,23 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
     Box,
+    useColorModeValue,
 } from '@chakra-ui/react';
 import { map, range } from 'ramda';
 import dayjs from 'dayjs';
+import localeData from 'dayjs/plugin/localeData'
+import 'dayjs/locale/zh'
+import 'dayjs/locale/en'
 import Button from '@minion-ui/button'
 import { ArrowRightIcon, ArrowLeftIcon, ChevronRightIcon, ChevronLeftIcon, AddIcon, MinusIcon } from '@chakra-ui/icons';
 import isBetween from 'dayjs/plugin/isBetween';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useTheme } from '@chakra-ui/react';
 
 dayjs.extend(customParseFormat)
 dayjs.extend(isBetween);
 
-const weekdays = ["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"];
+// const weekdays = ["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"];
 export interface DataContainerProps {
     date: {
         selectedDate: string;
@@ -52,6 +58,14 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
     const currentWeekday = 6 - lastDayOfMonth.day();
     const dateSuffix = lastDayOfMonth.add(currentWeekday, 'day').date();
     const dateSuffixArray = range(lastDayOfMonth.add(1, 'day').date(), dateSuffix + 1);
+    const [weekdays, setWeekdays] = useState(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"])
+
+    const containerBg = useColorModeValue('nd.50', 'nd.600');
+    const textColor = useColorModeValue('nl.700', 'nd.200');
+    const textPreSuffixColor = useColorModeValue('nl.300', 'nd.500')
+    const textInRangeColor = useColorModeValue('nd.50', 'nd.200');
+    const headAndTailBg = 'blue.500';
+    const inRangeBg = useColorModeValue('blue.200', 'nd.700');
 
     let dateRange = [selectedDate, selectedDate];
     let disableFunc: (d: undefined | string) => boolean = () => !!(rangeStartDate || rangeEndDate);
@@ -68,30 +82,43 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
     }
 
     const [y, m] = selectedDate.split('-');
-    return <Grid templateColumns={`repeat(${weekdays.length}, 1fr)`} gap={6}>
+    const theme = useTheme();
+    const currentLocale = theme.locale || 'zh-cn';
+    useEffect(() => {
+        dayjs.locale(currentLocale.split('-')[0]);
+        dayjs.extend(localeData);
+        setWeekdays(dayjs.weekdaysMin());
+    }, [currentLocale])
+    return <Grid templateColumns={`repeat(${weekdays.length}, 1fr)`} rowGap={2} padding='1rem 2rem 2rem'>
         {
-            map((d) => <Square w="3rem" h="3rem" key={d}>{d}</Square>, weekdays)
+            map((d) => <Square w="2rem" h="2rem" key={d}>{d}</Square>, weekdays)
         }
         {
             dataPrefixArray.length <= 6 &&
-            map((d) => <Square w="3rem" h="3rem"><Button w="3rem" variant="link" key={d} colorScheme='gray'>{d}</Button></Square>, dataPrefixArray)
+            map((d) => <Square w="2rem" h="2rem"><Button disabled w="2rem" variant="link" key={d} colorScheme='gray' color={textPreSuffixColor} opacity='1 !important'>{d}</Button></Square>, dataPrefixArray)
         }
         {
-            map((d) => <Square w="3rem" h="3rem" 
+            map((d) => {
+                const isBetweenNotInclude = dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()');
+                const isBetweenInclude = dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]');
+                return (<Square w="2rem" h="2rem" padding='0 0.5rem'
             // border={
             //     dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? '1px solid grey' : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? '1px solid' : 'none'}`
             // } 
             bg={
-                dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? 'blue.50' : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? 'blue.200' : 'nd.50'}`
-            }><Button w="3rem"
+                isBetweenNotInclude ? inRangeBg : isBetweenInclude ? headAndTailBg : containerBg
+            }
+            ><Button w="2rem"
                 disabled={disableFunc(`${y}-${m}-${d}`)}
                 colorScheme='gray'
                 onClick={() => {
                     onSelectedDateChange([y, m, d].join('-'))
-                }} variant="link" key={d}>{d}</Button></Square>, range(1, lastDayOfMonth.date() + 1))
+                }} 
+                color={isBetweenNotInclude ? textInRangeColor : isBetweenInclude ? textInRangeColor : disableFunc(`${y}-${m}-${d}`) ? textPreSuffixColor : textColor}
+                variant="link" opacity='1 !important' key={d}>{d}</Button></Square>)}, range(1, lastDayOfMonth.date() + 1))
         }
         {dateSuffixArray.length <= 6 &&
-            map((d) => <Square w="3rem" h="3rem"><Button w="3rem" variant="link" key={d} colorScheme='gray'>{d}</Button></Square>, dateSuffixArray)
+            map((d) => <Square w="2rem" h="2rem"><Button disabled w="2rem" variant="link" key={d} colorScheme='gray' color={textPreSuffixColor} opacity='1 !important'>{d}</Button></Square>, dateSuffixArray)
         }
     </Grid>
 }
@@ -102,10 +129,20 @@ export const ShowYearAndMonth = ({ selectedDate }: { selectedDate: string; }): J
     const year = day.year();
     const month = day.month();
     const date = day.date();
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
-    return <Heading w="15rem" size="md" textAlign="center">{`${monthNames[month]} ${date} ${year}`}</Heading>
+    const theme = useTheme();
+    const [monthNames, setMonthNames] = useState(["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+]);
+    const currentLocale = theme.locale || 'zh-cn';
+
+    useEffect(() => {
+        dayjs.locale(currentLocale.split('-')[0]);
+        dayjs.extend(localeData);
+        setMonthNames(dayjs.monthsShort());
+    }, [currentLocale])
+
+    const yearAndMonthColor = useColorModeValue('nl.900', 'nd.100');
+    return <Heading w="6.5rem" size="md" textAlign="center" fontSize='1rem' color={yearAndMonthColor}>{`${monthNames[month]} ${date} ${year}`}</Heading>
 }
 
 
@@ -129,24 +166,27 @@ export const GoToMonthYear = ({ direction, step = 1, date: { selectedDate, onSel
         const newDate = direction === 'backward' ? dayjs(selectedDate).subtract(1, 'year').endOf('month') : dayjs(selectedDate).add(1, 'year').startOf('month');
         onSelectedDateChange(newDate.format('YYYY-MM-DD'));
     }
-    const icon = direction === 'backward' ? <Flex><IconButton disabled={disabledYear} variant="link" aria-label="go-to-year" icon={<ArrowLeftIcon />} colorScheme='gray' onClick={onYearChange} /><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' onClick={onMonthChange} icon={<ChevronLeftIcon fontSize="1.7rem" />} /></Flex> :
-        <Flex><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' onClick={onMonthChange} icon={<ChevronRightIcon fontSize="1.7rem" />} /><IconButton variant="link" aria-label="go-to-year" icon={<ArrowRightIcon />} disabled={disabledYear} colorScheme='gray' onClick={onYearChange} /></Flex>
+    const goToYearColor = useColorModeValue('nl.900', 'nd.100');
+    const goToMonthColor = useColorModeValue('nl.700', 'nd.200');
+    const icon = direction === 'backward' ? <Flex><IconButton disabled={disabledYear} variant="link" aria-label="go-to-year" color={goToYearColor} fontSize='0.8rem' icon={<ArrowLeftIcon />} colorScheme='gray' onClick={onYearChange} /><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' onClick={onMonthChange} color={goToMonthColor} icon={<ChevronLeftIcon fontSize="1.2rem" />} /></Flex> :
+        <Flex><IconButton disabled={disableMonth} variant="link" aria-label="go-to-month" colorScheme='gray' color={goToMonthColor} onClick={onMonthChange}  icon={<ChevronRightIcon fontSize="1.2rem" />} /><IconButton variant="link" aria-label="go-to-year" icon={<ArrowRightIcon />} disabled={disabledYear} colorScheme='gray' onClick={onYearChange} fontSize='0.8rem' color={goToYearColor} /></Flex>
 
-    return <Square w="3rem" h="3rem">{icon}</Square>
+    return <Square w="0.5rem" h="0.5rem">{icon}</Square>
 }
 
 export const RangeSelector = ({ startDate, endDate }: RangeSelectorProps): JSX.Element => {
+    const containerBg = useColorModeValue('nd.50', 'nd.600');
     return <>
-        <VStack>
-            <HStack spacing="2rem">
+        <VStack bgColor={containerBg}>
+            <HStack paddingTop='1rem' spacing="2rem">
                 <GoToMonthYear direction="backward" date={startDate} />
                 <ShowYearAndMonth selectedDate={startDate.selectedDate} />
                 <GoToMonthYear direction="forward" date={startDate} limitDate={endDate.selectedDate} />
             </HStack>
             <DateContainer date={startDate} rangeEndDate={endDate.selectedDate}></DateContainer>
         </VStack>
-        <VStack>
-            <HStack spacing="2rem">
+        <VStack bgColor={containerBg}>
+            <HStack paddingTop='1rem' spacing="2rem">
                 <GoToMonthYear direction="backward" date={endDate} limitDate={startDate.selectedDate} />
                 <ShowYearAndMonth selectedDate={endDate.selectedDate} />
                 <GoToMonthYear direction="forward" date={endDate} />
@@ -196,7 +236,7 @@ export const TimePicker = ({ time: { selectedTime, onSelectedTimeChange }, range
         opacity: 0.1
     }
     return <HStack>
-        <NumberInput value={h} min={minH} max={maxH} onChange={(v) => onTimeChange({ h: v })} width="5rem">
+        <NumberInput value={h} min={minH} max={maxH} onChange={(v) => onTimeChange({ h: v })} width="4.5rem">
             <NumberInputField />
             <NumberInputStepper {...numberInputStepperStyle}>
                 <NumberIncrementStepper><AddIcon fontSize="xx-small" /></NumberIncrementStepper>
@@ -204,7 +244,7 @@ export const TimePicker = ({ time: { selectedTime, onSelectedTimeChange }, range
             </NumberInputStepper>
         </NumberInput>
         <Box>:</Box>
-        <NumberInput value={m} min={minM} max={maxM} onChange={(v) => onTimeChange({ m: v })} width="5rem">
+        <NumberInput value={m} min={minM} max={maxM} onChange={(v) => onTimeChange({ m: v })} width="4.5rem">
             <NumberInputField />
             <NumberInputStepper {...numberInputStepperStyle}>
                 <NumberIncrementStepper><AddIcon fontSize="xx-small" /></NumberIncrementStepper>
@@ -212,7 +252,7 @@ export const TimePicker = ({ time: { selectedTime, onSelectedTimeChange }, range
             </NumberInputStepper>
         </NumberInput>
         <Box>:</Box>
-        <NumberInput value={s} min={minS} max={maxS} onChange={(v) => onTimeChange({ s: v })} width="5rem">
+        <NumberInput value={s} min={minS} max={maxS} onChange={(v) => onTimeChange({ s: v })} width="4.5rem">
             <NumberInputField />
             <NumberInputStepper {...numberInputStepperStyle}>
                 <NumberIncrementStepper><AddIcon fontSize="xx-small" /></NumberIncrementStepper>

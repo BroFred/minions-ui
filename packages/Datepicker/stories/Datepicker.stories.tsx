@@ -6,7 +6,6 @@ import {
     HStack,
     Flex
 } from "@chakra-ui/react"
-import { F } from 'ramda';
 export default {
     title: 'Datepicker',
     component: Datepicker,
@@ -26,11 +25,13 @@ Basic.args = {
 const RangeTemplate: Story<RangeSelectorProps> = () => {
     const [selectedStartDate, onSelectedStartDateChange] = useState('1995-10-15');
     const [selectedEndDate, onSelectedEndDateChange] = useState('1995-10-31');
-    return <Flex justifyContent="space-around"><RangeSelector startDate={{
+    return <>
+        <Flex justifyContent="center"><RangeSelector startDate={{
         selectedDate: selectedStartDate, onSelectedDateChange: onSelectedStartDateChange
     }} endDate={{
         selectedDate: selectedEndDate, onSelectedDateChange: onSelectedEndDateChange
     }} /></Flex>
+    </>
 }
 
 export const BasicRange = RangeTemplate.bind({});
