@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
     Grid, Square, Heading, Flex, IconButton, VStack, HStack, NumberInput,
     NumberInputField, Text,
@@ -84,7 +84,7 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
     const [y, m] = selectedDate.split('-');
     const theme = useTheme();
     const currentLocale = theme.locale || 'zh-cn';
-    useMemo(() => {
+    useEffect(() => {
         dayjs.locale(currentLocale.split('-')[0]);
         dayjs.extend(localeData);
         setWeekdays(dayjs.weekdaysMin());
@@ -98,12 +98,15 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
             map((d) => <Square w="2rem" h="2rem"><Button disabled w="2rem" variant="link" key={d} colorScheme='gray' color={textPreSuffixColor} opacity='1 !important'>{d}</Button></Square>, dataPrefixArray)
         }
         {
-            map((d) => <Square w="2rem" h="2rem" padding='0 0.5rem'
+            map((d) => {
+                const isBetweenNotInclude = dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()');
+                const isBetweenInclude = dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]');
+                return (<Square w="2rem" h="2rem" padding='0 0.5rem'
             // border={
             //     dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? '1px solid grey' : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? '1px solid' : 'none'}`
             // } 
             bg={
-                dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? inRangeBg : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? headAndTailBg : containerBg}`
+                isBetweenNotInclude ? inRangeBg : isBetweenInclude ? headAndTailBg : containerBg
             }
             ><Button w="2rem"
                 disabled={disableFunc(`${y}-${m}-${d}`)}
@@ -111,8 +114,8 @@ const DateContainer = ({ date: { selectedDate, onSelectedDateChange }, rangeStar
                 onClick={() => {
                     onSelectedDateChange([y, m, d].join('-'))
                 }} 
-                color={dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '()') ? textInRangeColor : `${dayjs(`${y}-${m}-${d}`).isBetween(dateRange[0], dateRange[1], null, '[]') ? textInRangeColor : disableFunc(`${y}-${m}-${d}`) ? textPreSuffixColor : textColor}`}
-                variant="link" opacity='1 !important' key={d}>{d}</Button></Square>, range(1, lastDayOfMonth.date() + 1))
+                color={isBetweenNotInclude ? textInRangeColor : isBetweenInclude ? textInRangeColor : disableFunc(`${y}-${m}-${d}`) ? textPreSuffixColor : textColor}
+                variant="link" opacity='1 !important' key={d}>{d}</Button></Square>)}, range(1, lastDayOfMonth.date() + 1))
         }
         {dateSuffixArray.length <= 6 &&
             map((d) => <Square w="2rem" h="2rem"><Button disabled w="2rem" variant="link" key={d} colorScheme='gray' color={textPreSuffixColor} opacity='1 !important'>{d}</Button></Square>, dateSuffixArray)
@@ -132,7 +135,7 @@ export const ShowYearAndMonth = ({ selectedDate }: { selectedDate: string; }): J
 ]);
     const currentLocale = theme.locale || 'zh-cn';
 
-    useMemo(() => {
+    useEffect(() => {
         dayjs.locale(currentLocale.split('-')[0]);
         dayjs.extend(localeData);
         setMonthNames(dayjs.monthsShort());
