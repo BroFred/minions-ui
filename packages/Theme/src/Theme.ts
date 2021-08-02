@@ -4,6 +4,7 @@ import shadows from './shadow';
 import styles from './global';
 import { ButtonTheme as Button } from '@minion-ui/button';
 import { paginationTheme as Pagination } from '@minion-ui/pagination';
+import { HeadingTheme as Heading } from '@minion-ui/heading';
 import { createBreakpoints } from '@chakra-ui/theme-tools';
 import { always } from 'ramda';
 
@@ -27,6 +28,7 @@ const overrides = {
   sizes,
   breakpoints,
   components: {
+    Heading,
     Button,
     Pagination,
   },
