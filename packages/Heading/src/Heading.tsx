@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Heading as CHeading,
   HeadingProps as CHeadingProps,
+  forwardRef,
 } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 import { always } from 'ramda';
@@ -81,7 +82,7 @@ export interface HeadingProps extends CHeadingProps {
   /**
    * heading size
    */
-  size?:size;
+  size?: size;
   /**
    * Heading contents
    */
@@ -91,16 +92,15 @@ export interface HeadingProps extends CHeadingProps {
 /**
  * Primary UI component for user interaction
  */
-export const Heading: React.FC<HeadingProps> = ({
-  size = 'md',
-  children,
-  ...others
-}) => {
-  return (
-    <CHeading size={size} {...others}>
-      {children}
-    </CHeading>
-  );
-};
+
+export const Heading = forwardRef<HeadingProps, 'div'>(
+  ({ size = 'md', children, ...others }, ref) => {
+    return (
+      <CHeading ref={ref} size={size} {...others}>
+        {children}
+      </CHeading>
+    );
+  },
+);
 
 export default Heading;
