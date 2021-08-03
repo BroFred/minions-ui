@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button as CButton, ButtonProps as CButtonProps } from "@chakra-ui/react";
+import { Button as CButton, ButtonProps as CButtonProps, forwardRef, } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools"
 import { always } from 'ramda';
 
@@ -180,17 +180,17 @@ export interface ButtonProps extends CButtonProps {
 /**
  * Primary UI component for user interaction
  */
-export const Button: React.FC<ButtonProps> = ({
+export const Button = forwardRef<ButtonProps, 'button'> (({
   mode = 'primary',
   size = 'md',
   children,
   ...others
-}) => {
+}, ref) => {
   return (
-    <CButton variant={mode} size={size} {...others}>
+    <CButton ref={ref} variant={mode} size={size} {...others}>
       {children}
     </CButton>  
   )
-};
+});
 
 export default Button;
