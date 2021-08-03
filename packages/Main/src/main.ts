@@ -6,7 +6,6 @@ import ScrollBottomTrigger from '@minion-ui/scrollBottomTrigger';
 import theme from '@minion-ui/theme';
 import { SelectLayout, SingleSelect, MultipleSelect } from '@minion-ui/select';
 import DateContainer, {ShowYearAndMonth, GoToMonthYear, RangeSelector, TimePicker } from '@minion-ui/datepicker'
-import Heading from '@minion-ui/Heading'
 
 
 export {
@@ -18,5 +17,4 @@ export {
     SelectLayout, SingleSelect, MultipleSelect,
     ScrollBottomTrigger,
     DateContainer, ShowYearAndMonth, GoToMonthYear, RangeSelector, TimePicker,
-    Heading
 }
