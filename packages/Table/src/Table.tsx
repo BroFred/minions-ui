@@ -73,7 +73,7 @@ export const ThRow = ({ children }: { children: React.ReactNode[] }) => {
     return <>{children}</>
 }
 
-export const ThPure = ({ children, size, textAlign, resize, resizeId="" }: TableText): JSX.Element => {
+export const ThPure = ({ children, size, textAlign, resize, resizeId="", ...others }: TableText): JSX.Element => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
     const { ref } = useResizeDetector({
@@ -84,12 +84,12 @@ export const ThPure = ({ children, size, textAlign, resize, resizeId="" }: Table
             }
         }
     });
-    return <Flex ref={ref} resize={resize? "horizontal" : "none"} overflow="auto" className="cell" alignItems="center" bg={useColorModeValue('nl.200', 'nd.600')} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor={useColorModeValue('nl.400', 'nd.500')} color={useColorModeValue('nl.700', 'nd.100')}>
+    return <Flex ref={ref} resize={resize? "horizontal" : "none"} overflow="auto" alignItems="center" bg={useColorModeValue('nl.200', 'nd.600')} justifyContent={justifyContent} h={h} outline="1px solid" outlineColor={useColorModeValue('nl.400', 'nd.500')} color={useColorModeValue('nl.700', 'nd.100')} { ...others }>
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
     </Flex>
 }
 
-export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps): JSX.Element => {
+export const ThSort = ({ children, sort, size, textAlign, sortKey, ...others }: ThSortProps): JSX.Element => {
     const [{ isSortedDesc, sortKey: sortingKey }, setIsSortedDesc] = sort;
     const isSelfSorting = sortingKey === sortKey;
     const justifyContent = getTextAlign(textAlign);
@@ -100,7 +100,7 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
         return isSortedDesc === value ? undefined : value;
     }
     const h = getH(size);
-    return <Flex className="cell" alignItems="center" bg={ useColorModeValue('nl.200', 'nd.600')} outline="1px solid" outlineColor={useColorModeValue('nl.400', 'nd.500')} justifyContent={justifyContent} h={h} color={useColorModeValue('nl.700', 'nd.100')}>
+    return <Flex alignItems="center" bg={ useColorModeValue('nl.200', 'nd.600')} outline="1px solid" outlineColor={useColorModeValue('nl.400', 'nd.500')} justifyContent={justifyContent} h={h} color={useColorModeValue('nl.700', 'nd.100')} { ...others }>
         <CellContainer textAlign={textAlign}>{children}</CellContainer>
         <Flex width="4" mx="2" flexDirection="column">
             <Box onClick={() => setIsSortedDesc({
@@ -131,10 +131,10 @@ export const ThSort = ({ children, sort, size, textAlign, sortKey }: ThSortProps
     </Flex>
 }
 
-export const TdPure = ({ children, size, textAlign }: TableText) => {
+export const TdPure = ({ children, size, textAlign, ...others }: TableText) => {
     const justifyContent = getTextAlign(textAlign);
     const h = getH(size);
-    return <GridItem bg={useColorModeValue('nd.50', 'nd.900')} className="cell"><Flex alignItems="center" outline="1px solid" outlineColor={useColorModeValue('nl.300', 'nd.600')} justifyContent={justifyContent} h={h} color={useColorModeValue('nl.700', 'nd.200')}><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
+    return <GridItem bg={useColorModeValue('nd.50', 'nd.900')}><Flex alignItems="center" outline="1px solid" outlineColor={useColorModeValue('nl.300', 'nd.600')} justifyContent={justifyContent} h={h} color={useColorModeValue('nl.700', 'nd.200')} { ...others }><CellContainer textAlign={textAlign}>{children}</CellContainer></Flex></GridItem>
 }
 
 export const TdCollapsed = ({ children, row, show }: TdCollapsedProps) => {
