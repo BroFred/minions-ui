@@ -1,0 +1,8 @@
+.junior .CodeMirror {
+    /* Set height, width, borders, and global font properties here */
+    font-family: monospace;
+    height: auto;
+    padding: 10rem 0;
+    color: red;
+    direction: ltr;
+  }

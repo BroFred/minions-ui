@@ -1,6 +1,6 @@
 import React, {FC, useState, useEffect, useRef, useMemo} from 'react'
 import { Box } from '@chakra-ui/react';
-import { zipObj, range } from 'ramda';
+import { zipObj, range, head } from 'ramda';
 import codemirror from 'codemirror';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { format } from 'sql-formatter';
@@ -22,29 +22,35 @@ import init from './utils'
 
 export interface SqlEditorProps {
     value: string;
-    tableSignal: string;
+    tables?: {[tableName: string]: string[]};
+    autoComplete?: boolean; // 快捷键提示或自动提示
+    placeholder?: string;
+    tableSignal?: string;
+    tableName?: string;
+    wrapClassname?: string;
+    lineNumbers?: boolean;
 }
 
+const TableSignal = '/table';
+
 const SqlEditor: FC<SqlEditorProps> = (props) => {
-    const [editValue, setEditValue] = useState<string>('');
+    const {value = '', autoComplete = true, placeholder = '请输入sql语句', tableSignal = TableSignal, tableName = '', wrapClassname = '', lineNumbers = true} = props;
+    const [editValue, setEditValue] = useState<string>(value);
     const editorInstance = useRef<codemirror.Editor>();
     const [trigger, setTrigger] = useState<string>('');
 
     // console.log('...', trigger, editorInstance.current);
     const sqlTables = useMemo(() => zipObj(tableList.map((item) => item.name), tableList.map((item) => item.data.map((column) => column.name))), [tableList]);
-    const sqlHint = useRef(); // add type
-    // console.log('sqlHint~~~', sqlHint.current);
-    // console.log('keywords~~~', codemirror.resolveMode('text/x-sql').keywords);;
+    const sqlHint = useRef();
 
     const isTableMode = (value: string): boolean => {
         // console.log('check...', /\/table/gi.test(value));
-        return /\/table/gi.test(value);
+        const reg = new RegExp(tableSignal, 'gi');
+        return reg.test(value);
     }
 
     const getAllTokens = (editor, lineCount) => {
         const tokens = range(0, lineCount).reduce((pre, cur) => {
-            const line = editor.getLine(cur);
-            // console.log('lining', line, line.length);
             const lineToken = editor.getLineTokens(cur).map(item => ({
                 line: cur,
                 token: item,
@@ -54,15 +60,17 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
         return tokens;
     }
 
+    // 切换至默认模式，分为关键字优先模式 和 某张表的字段名优先模式
+    const getDefaultHintMethod = () => tableName ? codemirror.hint.columnSql : codemirror.hint.defaultSql;
+
     const onComplete = (editor, rangeEnd) => {
             setTrigger('');
             console.log('!!here', trigger);
-            editor.options.hintOptions.hint = codemirror.hint.defaultSql;
+            editor.options.hintOptions.hint = getDefaultHintMethod();
             if (trigger === 'table') {
-                // console.log('count', editor.lineCount());
                 const tokens = getAllTokens(editor, editor.lineCount())
                 console.log('tokens', tokens);
-                const targetTableToken = tokens.filter(item => item.token.string === '/table')[0];
+                const targetTableToken = tokens.filter(item => item.token.string === tableSignal)[0];
                 console.log('targetTableToken', targetTableToken);
                 editor.replaceRange('', {
                     line: targetTableToken.line,
@@ -89,7 +97,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
             editor.options.hintOptions.hint = codemirror.hint.tableSql;
         } else if (trigger === 'table') {
             setTrigger('');
-            editor.options.hintOptions.hint = codemirror.hint.defaultSql;
+            editor.options.hintOptions.hint = getDefaultHintMethod();
         }
 
         if (
@@ -98,11 +106,11 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
             && changeObj.text[0] !== ';'
             && curLine !== ''
         ) {
-        editor.execCommand('autocomplete');
+        autoComplete && editor.execCommand('autocomplete');
         } else if (changeObj.origin === 'complete') {
             // 选择并完成了一次自动补全
             onComplete(editor, {line: changeObj.from.line, end: changeObj.from.ch});
-        } else if (changeObj.origin === '+input' && tablemode && (/\s/gi.test(changeObj.text[0]) || (changeObj.text[0] === '' && changeObj.text[1] === ''))) {
+        } else if (changeObj.origin === '+input' && tablemode && (/\s/gi.test(changeObj.text[0]) || changeObj.text[0] === ';')) {
             // table模式下没用通过补全 而是 通过输入完成表名，这种情况下tokens的长度一定大于等于4
             const tokens = getAllTokens(editor, editor.lineCount());
             // console.log('999', tokens[tokens.length - 2]);
@@ -110,20 +118,22 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
         }
       };
     
-    // const onKeyDown = (editor, event) => {
-    //     console.log('key down');
-    //     console.log(event);
-    // }
     const autoFormatSql = () => {
         console.log('formating.formating.formating.formating.');
         setEditValue(format(editorInstance.current.getValue()))
     }
 
+    const getColumns = (tableName) => head(Object.entries(sqlTables).filter(([key]) => key === tableName))[1];
+
+    const singleTableColumns = useMemo(() =>  tableName ? getColumns(tableName) : [], [tableName]);
+
     const hintOptions = {
         // 自动匹配唯一值
         completeSingle: false,
         tables: sqlTables,
-        hint: sqlHint.current,
+        hint(editor, hintOptions) {
+            return sqlHint.current(editor, hintOptions, singleTableColumns);
+        }
       }
 
     useEffect(() => {
@@ -131,20 +141,21 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (trigger === '') {
-            sqlHint.current = codemirror.hint.defaultSql;
-        }
-        if (trigger === 'table') {
-            sqlHint.current = codemirror.hint.tableSql;
-        }
-        // console.log('sqlHint.current', sqlHint.current);
-    }, [editorInstance.current, trigger])
+        sqlHint.current = trigger === '' ? getDefaultHintMethod() : codemirror.hint.tableSql;
+        // if (trigger === '') {
+        //     sqlHint.current = getDefaultHintMethod();
+        // }
+        // if (trigger === 'table') {
+        //     sqlHint.current = codemirror.hint.tableSql;
+        // }
+    }, [editorInstance.current, trigger, tableName])
 
 
-    return <Box  border='solid 0.0625rem #eee'>
+    return <Box height='auto' maxHeight='20rem' boxSize='border-box' overflow='auto'  border='solid 0.0625rem #eee'>
       <CodeMirror
         value={editValue}
-        // className='junior-lee'
+        className={wrapClassname}
+        // style={{height: 'auto', padding: '0.5rem 0'}}
         options={{
           // 编辑器模式
           mode: { name: 'text/x-mysql' },
@@ -153,14 +164,15 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
           // 编辑器主题
           theme: 'neo',
           // 编辑器的左侧显示行号
-          lineNumbers: true,
+          lineNumbers,
           // 占位符
-          placeholder: '请输入sql语句',
+          placeholder,
           // 自动关闭方括号和引号
           autoCloseBrackets: true,
           // 是否换行
           lineWrapping: true,
           dragDrop: true,
+          viewportMargin: Infinity,
           // 提示配置
           hintOptions,
         }}
@@ -172,8 +184,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
           onChangeEvent(editor, changeObj, value);
         }}
         editorDidMount={(editor: codemirror.Editor) => {
-            // console.log('mount', editor);
-            editor.addKeyMap({'Alt-F': autoFormatSql});
+          editor.addKeyMap({'Alt-F': autoFormatSql});
           editorInstance.current = editor;
         }}
       />

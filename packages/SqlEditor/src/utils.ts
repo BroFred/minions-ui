@@ -236,6 +236,7 @@ export default function(CodeMirror) {
         }, [])
     }
 
+    // 默认模式1，优先提示关键字，次之提示标明
     CodeMirror.registerHelper("hint", "defaultSql", function(editor, options) {
       tables = parseTables(options && options.tables)
     //   const columns = getColumns(Object.values(tables));
@@ -305,6 +306,77 @@ export default function(CodeMirror) {
   
       return {list: result, from: Pos(cur.line, start), to: Pos(cur.line, end)};
     });
+
+    // 默认模式2，优先提示某表的字段名，次之提示关键字，再次之提示所有表名
+    CodeMirror.registerHelper("hint", "columnSql", function(editor, options, singleTableColumns) {
+        console.log('888', singleTableColumns);
+        tables = parseTables(options && options.tables)
+        var defaultTableName = options && options.defaultTable;
+        var disableKeywords = options && options.disableKeywords;
+        defaultTable = defaultTableName && getTable(defaultTableName);
+        keywords = getKeywords(editor);
+        identifierQuote = getIdentifierQuote(editor);
+    
+        if (defaultTableName && !defaultTable)
+          defaultTable = findTableByAlias(defaultTableName, editor);
+    
+        defaultTable = defaultTable || [];
+    
+        if (defaultTable.columns)
+          defaultTable = defaultTable.columns;
+    
+        var cur = editor.getCursor();
+        var result = [];
+        var token = editor.getTokenAt(cur), start, end, search;
+        if (token.end > cur.ch) {
+          token.end = cur.ch;
+          token.string = token.string.slice(0, cur.ch - token.start);
+        }
+    
+        if (token.string.match(/^[.`"'\w@][\w$#]*$/g)) {
+          search = token.string;
+          start = token.start;
+          end = token.end;
+        } else {
+          start = end = cur.ch;
+          search = "";
+        }
+        if (search.charAt(0) == "." || search.charAt(0) == identifierQuote) {
+          start = nameCompletion(cur, token, result, editor);
+        } else {
+          var objectOrClass = function(w, className) {
+            if (typeof w === "object") {
+              w.className = className;
+            } else {
+              w = { text: w, className: className };
+            }
+            return w;
+          };
+            addMatches(
+          result,
+          search,
+          singleTableColumns, function(w) {
+            return objectOrClass(w, "CodeMirror-hint-singleTableColumns");
+          }
+      );
+          if (!disableKeywords)
+          addMatches(result, search, keywords, function(w) {
+              return objectOrClass(w.toUpperCase(), "CodeMirror-hint-keyword");
+          });
+        addMatches(result, search, defaultTable, function(w) {
+            return objectOrClass(w, "CodeMirror-hint-table CodeMirror-hint-default-table");
+        });
+        addMatches(
+            result,
+            search,
+            tables, function(w) {
+              return objectOrClass(w, "CodeMirror-hint-table");
+            }
+        );
+      }
+    
+        return {list: result, from: Pos(cur.line, start), to: Pos(cur.line, end)};
+      });
 
     CodeMirror.registerHelper("hint", "tableSql", function(editor, options) {
         tables = parseTables(options && options.tables)

@@ -1,9 +1,10 @@
 import React, {useState, } from 'react';
 import { Story, Meta } from '@storybook/react';
 import SqlEditor from '../src/SqlEditor';
+// import './test.css'
 
 const SqlEditorTemplate: Story = () => {
-    return <SqlEditor tableSignal='/table' />
+    return <SqlEditor value='' autoComplete={true} tableName='' tableSignal='/table' wrapClassname='junior' />
 }
 
 export const SqlEditorStory = SqlEditorTemplate.bind({})
