@@ -4,7 +4,7 @@ import SqlEditor from '../src/SqlEditor';
 // import './test.css'
 
 const SqlEditorTemplate: Story = () => {
-    return <SqlEditor value='' autoComplete={true} tableName='' tableSignal='/table' wrapClassname='junior' />
+    return <SqlEditor value='' autoComplete={true} tableName='' tableSignal='/t' wrapClassname='junior' />
 }
 
 export const SqlEditorStory = SqlEditorTemplate.bind({})

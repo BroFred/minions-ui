@@ -32,6 +32,10 @@
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@minion-ui/button": "^0.0.1",
+<<<<<<< Updated upstream
+=======
+    "@types/codemirror": "^5.60.2",
+>>>>>>> Stashed changes
     "@types/ramda": "^0.27.40",
     "codemirror": "^5.62.3",
     "framer-motion": "^4.1.17",

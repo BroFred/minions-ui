@@ -1,3 +1,5 @@
+import { tail } from 'ramda';
+
 export default function(CodeMirror) {
     "use strict";
   
@@ -111,6 +113,7 @@ export default function(CodeMirror) {
   
     function nameCompletion(cur, token, result, editor) {
       // Try to complete table, column names and return start position of completion
+      console.log('token', token, cur);
       var useIdentifierQuotes = false;
       var nameParts = [];
       var start = token.start;
@@ -127,6 +130,17 @@ export default function(CodeMirror) {
           cont = true;
           token = editor.getTokenAt(Pos(cur.line, token.start));
         }
+      }
+      console.log('nameParts', nameParts);
+
+      // 根据 /k. 尝试提供关键字
+      const keywordsTrigger = nameParts[0] === '/k';
+      const keywords = CodeMirror.resolveMode('text/x-mysql').keywords;
+      if (keywordsTrigger) {
+          addMatches(result, tail(nameParts).join('.'), keywords, function(w) {
+              return useIdentifierQuotes ? insertIdentifierQuotes(w.toUpperCase()) : w.toUpperCase();
+            });
+          return start;
       }
   
       // Try to complete table names
@@ -173,6 +187,74 @@ export default function(CodeMirror) {
   
       return start;
     }
+
+    function keywordsCompletion(cur, token, result, editor) {
+        // Try to complete table, column names and return start position of completion
+        console.log('token', token, cur);
+        var useIdentifierQuotes = false;
+        var nameParts = [];
+        var start = token.start;
+        var cont = true;
+        while (cont) {
+          cont = (token.string.charAt(0) == ".");
+          useIdentifierQuotes = useIdentifierQuotes || (token.string.charAt(0) == identifierQuote);
+    
+          start = token.start;
+          nameParts.unshift(cleanName(token.string));
+    
+          token = editor.getTokenAt(Pos(cur.line, token.start));
+          if (token.string == ".") {
+            cont = true;
+            token = editor.getTokenAt(Pos(cur.line, token.start));
+          }
+        }
+
+        // Try to complete table names
+        var string = nameParts.join(".");
+        console.log('nameParts', nameParts, string);
+        addMatches(result, string, tables, function(w) {
+          return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
+        });
+        console.log('stage1 result', result);
+    
+        // Try to complete columns from defaultTable
+        addMatches(result, string, defaultTable, function(w) {
+          return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
+        });
+    
+        // Try to complete columns
+        string = nameParts.pop();
+        var table = nameParts.join(".");
+    
+        var alias = false;
+        var aliasTable = table;
+        // Check if table is available. If not, find table by Alias
+        if (!getTable(table)) {
+          var oldTable = table;
+          table = findTableByAlias(table, editor);
+          if (table !== oldTable) alias = true;
+        }
+    
+        var columns = getTable(table);
+        if (columns && columns.columns)
+          columns = columns.columns;
+    
+        if (columns) {
+          addMatches(result, string, columns, function(w) {
+            var tableInsert = table;
+            if (alias == true) tableInsert = aliasTable;
+          //   if (typeof w == "string") {
+          //     w = tableInsert + "." + w;
+          //   } else {
+          //     w = shallowClone(w);
+          //     w.text = tableInsert + "." + w.text;
+          //   }
+            return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
+          });
+        }
+    
+        return start;
+      }
   
     function eachWord(lineText, f) {
       var words = lineText.split(/\s+/)
@@ -229,12 +311,6 @@ export default function(CodeMirror) {
       }
       return table;
     }
-    
-    function getColumns(tables) {
-        return tables.reduce((pre, cur) => {
-            return [...pre, ...cur.columns];
-        }, [])
-    }
 
     // 默认模式1，优先提示关键字，次之提示标明
     CodeMirror.registerHelper("hint", "defaultSql", function(editor, options) {
@@ -281,6 +357,7 @@ export default function(CodeMirror) {
           }
           return w;
         };
+        console.log('just search', search);
         if (!disableKeywords)
         addMatches(result, search, keywords, function(w) {
             return objectOrClass(w.toUpperCase(), "CodeMirror-hint-keyword");
@@ -411,7 +488,7 @@ export default function(CodeMirror) {
           search = "";
         }
         if (search.charAt(0) == "." || search.charAt(0) == identifierQuote) {
-          start = nameCompletion(cur, token, result, editor);
+          start = keywordsCompletion(cur, token, result, editor);
         } else {
           var objectOrClass = function(w, className) {
             if (typeof w === "object") {
@@ -421,9 +498,7 @@ export default function(CodeMirror) {
             }
             return w;
           };
-        // addMatches(result, search, defaultTable, function(w) {
-        //     return objectOrClass(w, "CodeMirror-hint-table CodeMirror-hint-default-table");
-        // });
+          console.log('just search', search);
         addMatches(
             result,
             search,

@@ -7,6 +7,7 @@ import theme from '@minion-ui/theme';
 import { SelectLayout, SingleSelect, MultipleSelect } from '@minion-ui/select';
 import DateContainer, {ShowYearAndMonth, GoToMonthYear, RangeSelector, TimePicker } from '@minion-ui/datepicker'
 import Heading from '@minion-ui/Heading'
+import SqlEditor from '@minion-ui/sqleditor';
 
 
 export {
@@ -18,5 +19,6 @@ export {
     SelectLayout, SingleSelect, MultipleSelect,
     ScrollBottomTrigger,
     DateContainer, ShowYearAndMonth, GoToMonthYear, RangeSelector, TimePicker,
-    Heading
+    Heading,
+    SqlEditor,
 }

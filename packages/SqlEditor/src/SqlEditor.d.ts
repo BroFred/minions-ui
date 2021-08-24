@@ -9,6 +9,7 @@ export interface SqlEditorProps {
     tableName?: string;
     wrapClassname?: string;
     lineNumbers?: boolean;
+    callback?(value: string): void;
 }
 
 export declare const SqlEditor: React.FC<SqlEditorProps>

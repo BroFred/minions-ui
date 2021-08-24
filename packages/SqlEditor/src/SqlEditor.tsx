@@ -1,5 +1,5 @@
 import React, {FC, useState, useEffect, useRef, useMemo} from 'react'
-import { Box } from '@chakra-ui/react';
+import { Box, useColorMode } from '@chakra-ui/react';
 import { zipObj, range, head } from 'ramda';
 import codemirror from 'codemirror';
 import { Controlled as CodeMirror } from 'react-codemirror2';
@@ -10,7 +10,6 @@ import 'codemirror/addon/hint/sql-hint.js';
 import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/display/placeholder.js';
 import 'codemirror/addon/edit/closebrackets.js';
-import 'codemirror/addon/hint/anyword-hint';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/neo.css';
@@ -29,19 +28,26 @@ export interface SqlEditorProps {
     tableName?: string;
     wrapClassname?: string;
     lineNumbers?: boolean;
+    callback?(value: string): void;
 }
 
 const TableSignal = '/table';
 
+const ThemeMap = {
+    light: 'neo',
+    dark: 'material',
+};
+
 const SqlEditor: FC<SqlEditorProps> = (props) => {
-    const {value = '', autoComplete = true, placeholder = '请输入sql语句', tableSignal = TableSignal, tableName = '', wrapClassname = '', lineNumbers = true} = props;
+    const {value = '', autoComplete = true, placeholder = '请输入sql语句', tableSignal = TableSignal, tableName = '', wrapClassname = '', lineNumbers = true, callback} = props;
     const [editValue, setEditValue] = useState<string>(value);
     const editorInstance = useRef<codemirror.Editor>();
     const [trigger, setTrigger] = useState<string>('');
 
-    // console.log('...', trigger, editorInstance.current);
+    console.log('...', trigger, editorInstance.current);
     const sqlTables = useMemo(() => zipObj(tableList.map((item) => item.name), tableList.map((item) => item.data.map((column) => column.name))), [tableList]);
     const sqlHint = useRef();
+    const { colorMode } = useColorMode();
 
     const isTableMode = (value: string): boolean => {
         // console.log('check...', /\/table/gi.test(value));
@@ -106,7 +112,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
             && changeObj.text[0] !== ';'
             && curLine !== ''
         ) {
-        autoComplete && editor.execCommand('autocomplete');
+            autoComplete && editor.execCommand('autocomplete');
         } else if (changeObj.origin === 'complete') {
             // 选择并完成了一次自动补全
             onComplete(editor, {line: changeObj.from.line, end: changeObj.from.ch});
@@ -134,7 +140,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
         hint(editor, hintOptions) {
             return sqlHint.current(editor, hintOptions, singleTableColumns);
         }
-      }
+      };
 
     useEffect(() => {
         init(codemirror);
@@ -148,7 +154,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
         // if (trigger === 'table') {
         //     sqlHint.current = codemirror.hint.tableSql;
         // }
-    }, [editorInstance.current, trigger, tableName])
+    }, [editorInstance.current, trigger, tableName]);
 
 
     return <Box height='auto' maxHeight='20rem' boxSize='border-box' overflow='auto'  border='solid 0.0625rem #eee'>
@@ -162,7 +168,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
           // 提示触发快捷键配置
           extraKeys: { Ctrl: 'autocomplete' },
           // 编辑器主题
-          theme: 'neo',
+          theme: ThemeMap[colorMode],
           // 编辑器的左侧显示行号
           lineNumbers,
           // 占位符
@@ -177,6 +183,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
           hintOptions,
         }}
         onBeforeChange={(editor, changeObj, value) => {
+            callback && callback(value);
             setEditValue(value);
         }}
         // editor: 编辑器实例对象 changeObj: 此次文本改变的记录 value:当前文本
