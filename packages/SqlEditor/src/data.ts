@@ -126,7 +126,7 @@ export const tableList = [
                 "codec_expression":""
             }
         ],
-        "name":"78gh",
+        "name":"7896gh",
         "alias":"78gh_table_aliassss",
         "description":"78gh_table_desc"
     },
@@ -1835,7 +1835,7 @@ export const tableList = [
                 "codec_expression":""
             }
         ],
-        "name":"access",
+        "name":"access.a",
         "alias":"accessAlias",
         "description":"desc"
     },

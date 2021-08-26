@@ -5,7 +5,6 @@ export interface SqlEditorProps {
     tables?: {[tableName: string]: string[]};
     autoComplete?: boolean;
     placeholder?: string;
-    tableSignal?: string;
     tableName?: string;
     wrapClassname?: string;
     lineNumbers?: boolean;
