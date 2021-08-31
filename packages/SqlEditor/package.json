@@ -36,6 +36,8 @@
     "@types/ramda": "^0.27.40",
     "codemirror": "^5.62.3",
     "framer-motion": "^4.1.17",
+    "fuse.js": "^6.4.6",
+    "fuzzysearch": "^1.0.3",
     "ramda": "^0.27.1",
     "react": "^17.0.2",
     "react-codemirror2": "^7.2.1",

@@ -1,3 +1,5 @@
+import Fuse from 'fuse.js';
+// import fuzzysearch from 'fuzzysearch';
 import { tail, last, dropLast, drop } from 'ramda';
 
 export default function(CodeMirror) {
@@ -5,13 +7,25 @@ export default function(CodeMirror) {
   
     var tables;
     var defaultTable;
-    var keywords;
+    // var keywords;
     var identifierQuote;
     var CONS = {
       QUERY_DIV: ";",
       ALIAS_KEYWORD: "AS"
     };
     var Pos = CodeMirror.Pos, cmpPos = CodeMirror.cmpPos;
+
+    const commonFunction = ['count', 'min', 'max', 'sum', 'avg', 'any', 'stddevPop', 'stddevSamp', 'varPop', 'varSamp', 'covarPop', 'covarSamp'];
+    const clickHouseFunction = ["anyHeavy", "anyLast", "argMin", "argMax", "avgWeighted", "topK", "topKWeighted", "groupArray", "groupUniqArray", "groupArrayInsertAt", "groupArrayMovingAvg", "groupArrayMovingSum", "groupBitAnd", "groupBitOr", "groupBitXor", "groupBitmap", "groupBitmapAnd", "groupBitmapOr", "groupBitmapXor", "sumWithOverflow", "sumMap", "minMap", "maxMap", "skewSamp", "skewPop", "kurtSamp", "kurtPop", "uniq", "uniqExact", "uniqCombined", "uniqCombined64", "uniqHLL12", "quantile", "quantiles", "quantileExact", "quantileExactLow", "quantileExactHigh", "quantileExactWeighted", "quantileTiming", "quantileTimingWeighted", "quantileDeterministic", "quantileTDigest", "quantileTDigestWeighted", "simpleLinearRegression", "stochasticLinearRegression", "stochasticLogisticRegression", "categoricalInformationValue"]
+    const functions = [...commonFunction, ...clickHouseFunction];
+    const keywords = removeDuplicateKeywords(Object.keys(CodeMirror.resolveMode('text/x-mysql').keywords));
+
+
+    function removeDuplicateKeywords (keywords) {
+      const s = new Set(keywords);
+      commonFunction.forEach(item => {s.delete(item)});
+      return Array.from(s);
+    }
   
     function isArray(val) { return Object.prototype.toString.call(val) == "[object Array]" }
   
@@ -61,25 +75,105 @@ export default function(CodeMirror) {
         result[key] = object[key];
       return result;
     }
+
+    function fuzzysearch(needle, haystack) {
+      const tlen = haystack.length;
+      const qlen = needle.length;
+      if (qlen > tlen) {
+        return false;
+      }
+      if (qlen === tlen) {
+        return needle === haystack;
+      }
+      outer: for (let i = 0, j = 0; i < qlen; i++) {
+        const nch = needle.charCodeAt(i);
+        while (j < tlen) {
+          if (haystack.charCodeAt(j++) === nch) {
+            continue outer;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+
+    function fuzzysearch2(needle, haystack) {
+      const tlen = haystack.length;
+      const qlen = needle.length;
+      if (qlen > tlen) {
+        return false;
+      }
+      if (qlen === tlen) {
+        return needle === haystack;
+      }
+      const pos = [];
+      outer: for (let i = 0, j = 0; i < qlen; i++) {
+        const nch = needle.charCodeAt(i);
+        while (j < tlen) {
+          if (haystack.charCodeAt(j++) === nch) {
+            pos.push(j - 1);
+            continue outer;
+          }
+        }
+        return false;
+      }
+      console.log('pos', pos);
+      return true;
+    }
   
     function match(string, word) {
+      // console.log(fuzzysearch2('slc', 'select'));
       var len = string.length;
       var sub = getText(word).substr(0, len);
-      return string.toUpperCase() === sub.toUpperCase();
+      // return string.toUpperCase() === sub.toUpperCase() || fuzzysearch(string.toUpperCase(), word.toUpperCase());
+      if (string.toUpperCase() === sub.toUpperCase()) 
+        return 'Strictly';
+      return fuzzysearch(string.toUpperCase(), word.toUpperCase());
+      // return includes(string, word);
     }
   
     function addMatches(result, search, wordlist, formatter) {
       if (isArray(wordlist)) {
-        for (var i = 0; i < wordlist.length; i++)
-          if (match(search, wordlist[i])) result.push(formatter(wordlist[i]))
+        // console.log('if if if fi if if if if if if fi if if ifif if if fi if if ifif if if fi if if if', wordlist);
+        // const fuse = new Fuse(wordlist, fuseOptions);
+        // console.log('fuse', fuse.search(search).map(res => formatter(res.item)));
+        // result.push(...fuse.search(search).map(res => formatter(res.item)));
+        for (var i = 0; i < wordlist.length; i++) {
+          if (match(search, wordlist[i]) === 'Strictly') {
+            result.push({
+              strict: true,
+              text: formatter(wordlist[i]),
+            });
+          } else if (match(search, wordlist[i])) {
+            result.push({
+              strict: false,
+              text: formatter(wordlist[i]),
+            });
+          }
+        }
       } else {
+        // console.log('else else else else else else else else else else else else else else else');
+        // const fuse = new Fuse(Object.values(wordlist), fuseOptions);
+
+        // result.push(...fuse.search(search).map(res => formatter(res.item)));
         for (var word in wordlist) if (wordlist.hasOwnProperty(word)) {
           var val = wordlist[word]
           if (!val || val === true)
             val = word
           else
             val = val.displayText ? {text: val.text, displayText: val.displayText} : val.text
-          if (match(search, val)) result.push(formatter(val))
+          // if (match(search, val)) result.push(formatter(val))
+          if (match(search, val) === 'Strictly') {
+            result.push({
+              strict: true,
+              text: formatter(val),
+            });
+          } else if (match(search, val)) {
+            result.push({
+              strict: false,
+              text: formatter(val),
+            });
+          }
         }
       }
     }
@@ -111,7 +205,7 @@ export default function(CodeMirror) {
       return name;
     }
   
-    function nameCompletion(cur, token, result, editor, singleTableColumns) {
+    function nameCompletion(cur, token, result, editor, singleTableColumns, keywordsAndFunctions) {
       // Try to complete table, column names and return start position of completion
       console.log('token', token, cur);
       var useIdentifierQuotes = false;
@@ -141,13 +235,31 @@ export default function(CodeMirror) {
         nameParts = [dropLast(1, nameParts).join(''), last(nameParts)];
       }
       console.log('nameParts', nameParts);
+      var objectOrClass = function(w, className) {
+        if (typeof w === "object") {
+          w.className = className;
+        } else {
+          w = { text: w, className: className };
+        }
+        return w;
+      };
 
       // 根据 ?k. 尝试提供关键字
       const keywordsTrigger = nameParts[0] === '?k';
-      const keywords = CodeMirror.resolveMode('text/x-mysql').keywords;
       if (keywordsTrigger) {
-          addMatches(result, tail(nameParts).join('.'), keywords, function(w) {
-              return useIdentifierQuotes ? insertIdentifierQuotes(w.toUpperCase()) : w.toUpperCase();
+        const search = tail(nameParts).join('.');
+          addMatches(result, search, keywordsAndFunctions.keywords || keywords, function(w) {
+              return useIdentifierQuotes ? insertIdentifierQuotes(w.toUpperCase()) : objectOrClass(w.toUpperCase(), `CodeMirror-hint-keyword ${search}`);
+            });
+          return start;
+      }
+
+      // 根据 ?f. 尝试提供关键字
+      const functionsTrigger = nameParts[0] === '?f';
+      if (functionsTrigger) {
+        const search = tail(nameParts).join('.');
+          addMatches(result, search, keywordsAndFunctions.functions || functions, function(w) {
+              return useIdentifierQuotes ? insertIdentifierQuotes(w.toUpperCase()) : objectOrClass(w.toUpperCase(), `CodeMirror-hint-function ${search}`);
             });
           return start;
       }
@@ -156,8 +268,9 @@ export default function(CodeMirror) {
       const tablesTrigger = nameParts[0] === '?t';
       console.log('tablesTrigger', tablesTrigger);
       if (tablesTrigger) {
-        addMatches(result, tail(nameParts).join('.'), tables, function(w) {
-          return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
+        const search = tail(nameParts).join('.');
+        addMatches(result, search, tables, function(w) {
+          return useIdentifierQuotes ? insertIdentifierQuotes(w) : objectOrClass(w, `CodeMirror-hint-table ${search}`);
         });
       return start;
       }
@@ -165,25 +278,26 @@ export default function(CodeMirror) {
       // 根据 ?c. 尝试提供某张表的字段名
       const columnssTrigger = nameParts[0] === '?c';
       if (columnssTrigger) {
-        addMatches(result, tail(nameParts).join('.'), singleTableColumns, function(w) {
-          return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
+        const search = tail(nameParts).join('.')
+        addMatches(result, search, singleTableColumns, function(w) {
+          return useIdentifierQuotes ? insertIdentifierQuotes(w) : objectOrClass(w, `CodeMirror-hint-column ${search}`);
         });
       return start;
       }
   
       // Try to complete table names
-      var string = nameParts.join(".");
-      addMatches(result, string, tables, function(w) {
-        return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
+      var search = nameParts.join(".");
+      addMatches(result, search, tables, function(w) {
+        return useIdentifierQuotes ? insertIdentifierQuotes(w) : objectOrClass(w, `CodeMirror-hint-table ${search}`);
       });
   
       // Try to complete columns from defaultTable
-      addMatches(result, string, defaultTable, function(w) {
-        return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
-      });
+      // addMatches(result, string, defaultTable, function(w) {
+      //   return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
+      // });
   
       // Try to complete columns
-      string = nameParts.pop();
+      var string = nameParts.pop();
       var table = nameParts.join(".");
       console.log('找表格', table, string);
   
@@ -210,7 +324,7 @@ export default function(CodeMirror) {
         //     w = shallowClone(w);
         //     w.text = tableInsert + "." + w.text;
         //   }
-          return useIdentifierQuotes ? insertIdentifierQuotes(w) : w;
+          return useIdentifierQuotes ? insertIdentifierQuotes(w) : objectOrClass(w, `CodeMirror-hint-column ${string}`);
         });
       }
   
@@ -288,21 +402,22 @@ export default function(CodeMirror) {
     }
 
     // 默认模式，1. 没有 ??. 命令时，优先提示关键字，次之提示表名   2. 有 ?t. ?k. ?c.时，提示相应内容
-    CodeMirror.registerHelper("hint", "defaultSql", function(editor, options, singleTableColumns) {
+    CodeMirror.registerHelper("hint", "defaultSql", function(editor, options, singleTableColumns, keywordsAndFunctions) {
       tables = parseTables(options && options.tables)
+      console.log('parse的table', tables);
     //   const columns = getColumns(Object.values(tables));
-      var defaultTableName = options && options.defaultTable;
+      // var defaultTableName = options && options.defaultTable;
       var disableKeywords = options && options.disableKeywords;
-      defaultTable = defaultTableName && getTable(defaultTableName);
-      keywords = getKeywords(editor);
+      // defaultTable = defaultTableName && getTable(defaultTableName);
+      // keywords = getKeywords(editor);
       identifierQuote = getIdentifierQuote(editor);
   
-      if (defaultTableName && !defaultTable)
-        defaultTable = findTableByAlias(defaultTableName, editor);
+      // if (defaultTableName && !defaultTable)
+      //   defaultTable = findTableByAlias(defaultTableName, editor);
   
-      defaultTable = defaultTable || [];
-      if (defaultTable.columns)
-        defaultTable = defaultTable.columns;
+      // defaultTable = defaultTable || [];
+      // if (defaultTable.columns)
+      //   defaultTable = defaultTable.columns;
   
       var cur = editor.getCursor();
       var result = [];
@@ -335,9 +450,12 @@ export default function(CodeMirror) {
         start = end = cur.ch;
         search = "";
       }
-      if (search.charAt(0) == "." || search.charAt(0) == identifierQuote) {
-        start = nameCompletion(cur, token, result, editor, singleTableColumns);
-      } else {
+      if (search.charAt(0) == ".") {
+        start = nameCompletion(cur, token, result, editor, singleTableColumns, keywordsAndFunctions);
+      } else if ( token.type === 'number' || /^[~!@#$%^&*()?_+=]/ig.test(token.string)) {
+        return {list: result, from: Pos(cur.line, start), to: Pos(cur.line, end)};
+      }
+        else {
         var objectOrClass = function(w, className) {
           if (typeof w === "object") {
             w.className = className;
@@ -348,17 +466,20 @@ export default function(CodeMirror) {
         };
         console.log('just search', search);
         if (!disableKeywords)
-        addMatches(result, search, keywords, function(w) {
-            return objectOrClass(w.toUpperCase(), "CodeMirror-hint-keyword");
+        addMatches(result, search, keywordsAndFunctions.keywords || keywords, function(w) {
+            return objectOrClass(w.toUpperCase(), `CodeMirror-hint-keyword ${search}`);
         });
-      addMatches(result, search, defaultTable, function(w) {
-          return objectOrClass(w, "CodeMirror-hint-table CodeMirror-hint-default-table");
-      });
+      // addMatches(result, search, defaultTable, function(w) {
+      //     return objectOrClass(w, "CodeMirror-hint-table CodeMirror-hint-default-table");
+      // });
+      addMatches(result, search, keywordsAndFunctions.functions || functions, function(w) {
+        return objectOrClass(w.toUpperCase(), `CodeMirror-hint-function ${search}`);
+    });
       addMatches(
           result,
           search,
           tables, function(w) {
-            return objectOrClass(w, "CodeMirror-hint-table");
+            return objectOrClass(w,  `CodeMirror-hint-table ${search}`);
           }
       );
     //   addMatches(
@@ -369,7 +490,15 @@ export default function(CodeMirror) {
     //     }
     // );
     }
+
+    // console.log('结果是', keywords, tables, result);
+    const strictResult = [];
+    const fuzzResult = [];
+    result.forEach(item => {
+      item.strict ? strictResult.push(item.text) : fuzzResult.push(item.text)
+    })
+    console.log('transform///', [...strictResult, ...fuzzResult]);
   
-      return {list: result, from: Pos(cur.line, start), to: Pos(cur.line, end)};
+      return {list: [...strictResult, ...fuzzResult], from: Pos(cur.line, start), to: Pos(cur.line, end)};
     });
 }

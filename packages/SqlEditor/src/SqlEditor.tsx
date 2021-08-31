@@ -6,8 +6,8 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import { format } from 'sql-formatter';
 
 import 'codemirror/mode/sql/sql';
-import 'codemirror/addon/hint/sql-hint.js';
-import 'codemirror/addon/hint/show-hint.js';
+// import 'codemirror/addon/hint/sql-hint.js';
+// import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/display/placeholder.js';
 import 'codemirror/addon/edit/closebrackets.js';
 
@@ -15,9 +15,11 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/neo.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/hint/show-hint.css';
+import './sqlEditorStyle.css'
 
 import {tableList} from './data'
 import init from './utils'
+import initHint from './hintUtils'
 
 export interface SqlEditorProps {
     value: string;
@@ -27,6 +29,7 @@ export interface SqlEditorProps {
     tableName?: string;
     wrapClassname?: string;
     lineNumbers?: boolean;
+    keywordsAndFunctions?: { keywords: string[], functions: string[] };
     callback?(value: string): void;
 }
 
@@ -36,12 +39,16 @@ const ThemeMap = {
 };
 
 const SqlEditor: FC<SqlEditorProps> = (props) => {
-    const {value = '', tables = {}, autoComplete = true, placeholder = '请输入sql语句', tableName = '', wrapClassname = '', lineNumbers = true, callback} = props;
+    const {value = '', tables = {}, autoComplete = true, placeholder = '请输入sql语句', tableName = '', wrapClassname = '', lineNumbers = true, keywordsAndFunctions = {}, callback} = props;
     const [editValue, setEditValue] = useState<string>(value);
     const editorInstance = useRef<codemirror.Editor>();
     // const [trigger, setTrigger] = useState<string>('');
 
     console.log('...', editorInstance.current);
+    // const cur = editorInstance.current?.getCursor();
+    // const curLine = editorInstance.current?.getLine(cur.line);
+    // console.log('curline', curLine);
+
     // const sqlTables = useMemo(() => zipObj(tableList.map((item) => item.name), tableList.map((item) => item.data.map((column) => column.name))), [tableList]);
     const sqlHint = useRef();
     const { colorMode } = useColorMode();
@@ -67,7 +74,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
     }
 
     const onChangeEvent = (editor, changeObj, value): void => {
-        console.log('changeObj', changeObj, 'editor', editor);
+        // console.log('changeObj', changeObj, 'editor', editor);
          // 获取当前光标相关数据
         const cur = editor.getCursor();
         // console.log('cur', cur);
@@ -82,7 +89,8 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
             && !/^\s*$/ig.test(curLine)
         ) {
             autoComplete && editor.execCommand('autocomplete');
-        } else if (changeObj.origin === '+input' && /(\s|;|,)/gi.test(changeObj.text[0])) {
+        } else if (changeObj.origin === '+input' && /(\s|;|,|\.)/gi.test(changeObj.text[0])) {
+          console.log('+++++++++++++++++++++++');
             const { start, end } = checkModeActive(editor, cur.line);
             start !== -1 && editor.replaceRange('', { line: cur.line, ch: start,}, { line: cur.line, ch: end + 1, });
         }
@@ -98,17 +106,18 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
 
     const singleTableColumns = useMemo(() =>  tableName ? getColumns(tableName) : [], [tableName]);
 
-    const hintOptions = {
+    const customHintOptions = {
         // 自动匹配唯一值
         completeSingle: false,
         tables,
         hint(editor, hintOptions) {
-            return sqlHint.current(editor, hintOptions, singleTableColumns);
+          console.log('000');
+            return sqlHint.current(editor, hintOptions, singleTableColumns, keywordsAndFunctions);
         }
       };
-
     useEffect(() => {
         init(codemirror);
+        initHint(codemirror);
     }, []);
 
     useEffect(() => {
@@ -138,7 +147,7 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
           dragDrop: true,
           viewportMargin: Infinity,
           // 提示配置
-          hintOptions,
+          customHintOptions,
         }}
         onBeforeChange={(editor, changeObj, value) => {
             callback && callback(value);

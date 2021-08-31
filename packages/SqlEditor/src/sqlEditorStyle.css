@@ -1,0 +1,58 @@
+.CodeMirror {
+    height: auto;
+    font-size: 0.875rem;
+}
+
+/* 编辑器黑版样式 */
+.chakra-ui-dark  .CodeMirror {
+    background: #33343C;
+}
+
+/* 提示框白版样式 */
+.CodeMirror-hints {
+  padding: 0;
+}
+
+.CodeMirror-hint {
+    padding: 0.625rem 1rem;
+    color: #26292E;
+    display: flex;
+    align-items: center;
+  }
+
+.CodeMirror-hint .iconfont {
+  padding-right: 1rem;
+}
+  
+li.CodeMirror-hint-active {
+  background: #F5F7FA;
+  color: #26292E;
+}
+
+.CodeMirror-hint .type {
+  margin-left: auto;
+  padding: 0 1rem;
+  color: #DDE3EE;
+}
+
+.CodeMirror-hint .highlight {
+  font-weight: bold;
+}
+
+/* 提示框黑版样式 */
+.chakra-ui-dark  .CodeMirror-hints {
+    background: #636974;
+}
+
+.chakra-ui-dark .CodeMirror-hint {
+    color: white;
+  }
+
+.chakra-ui-dark .CodeMirror-hint .type {
+  color: #393E47;
+}
+  
+.chakra-ui-dark  li.CodeMirror-hint-active {
+    background: #26292E;
+    color: white;
+  }
