@@ -11,7 +11,18 @@ const SqlEditorTemplate: Story = () => {
     const sqlTables = useMemo(() => zipObj(clone(tableList).sort().map((item) => item.name), clone(tableList).sort().map((item) => item.data.map((column) => column.name))), [tableList]);
     return <><SqlEditor value='' autoComplete={true} tables={{}} tableName='price' wrapClassname='junior' callback={setCurrentValue} />
         <p>{currentValue}</p>
-        <div id='123456'>123456</div>
+        <div id='123456' draggable
+              onDragStart={(ev) => {
+                console.log('dragStart');
+                ev.dataTransfer.setData('text', '爷来啦');
+                // ev.currentTarget.style.border = 'dashed';
+                ev.dataTransfer.dropEffect = 'copy';
+                ev.effectAllowed = 'copyMove';
+              }}
+              onDragEnd={(ev) => {
+                console.log('dragEnd');
+                ev.dataTransfer.clearData();
+              }}>123456</div>
     </>
 }
 

@@ -157,6 +157,13 @@ const SqlEditor: FC<SqlEditorProps> = (props) => {
         onChange={(editor, changeObj, value) => {
           onChangeEvent(editor, changeObj, value);
         }}
+        onDragOver={(edirot, ev) => {
+          console.log('dragOver');
+          ev.preventDefault();
+        }}
+        onDrop={(editor, ev) => {
+          console.log('drop了', ev);
+        }}
         editorDidMount={(editor: codemirror.Editor) => {
           editor.addKeyMap({ 
               'Alt-F': autoFormatSql,
