@@ -1,8 +1,22 @@
-import Fuse from 'fuse.js';
-// import fuzzysearch from 'fuzzysearch';
-import { tail, last, dropLast, drop } from 'ramda';
+import { tail, last, dropLast, drop, range } from 'ramda';
+import { clickhouseCommonFunctions } from './functionData'
 
-export default function(CodeMirror) {
+export const _debounce = (
+  fn: any,
+  delay: number,
+  immediate = false
+): any => {
+  let timer;
+  return (params): void => {
+    if (immediate) {
+      fn(params);
+    }
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(params), delay);
+  };
+};
+
+export default function(CodeMirror, keywordsAndFunctions) {
     "use strict";
   
     var tables;
@@ -15,17 +29,50 @@ export default function(CodeMirror) {
     };
     var Pos = CodeMirror.Pos, cmpPos = CodeMirror.cmpPos;
 
-    const commonFunction = ['count', 'min', 'max', 'sum', 'avg', 'any', 'stddevPop', 'stddevSamp', 'varPop', 'varSamp', 'covarPop', 'covarSamp'];
+    const commonFunction = ['count', 'min', 'max', 'sum', 'avg', 'any', 'stddevPop', 'stddevSamp', 'varPop', 'varSamp', 'covarPop', 'covarSamp', ...clickhouseCommonFunctions];
     const clickHouseFunction = ["anyHeavy", "anyLast", "argMin", "argMax", "avgWeighted", "topK", "topKWeighted", "groupArray", "groupUniqArray", "groupArrayInsertAt", "groupArrayMovingAvg", "groupArrayMovingSum", "groupBitAnd", "groupBitOr", "groupBitXor", "groupBitmap", "groupBitmapAnd", "groupBitmapOr", "groupBitmapXor", "sumWithOverflow", "sumMap", "minMap", "maxMap", "skewSamp", "skewPop", "kurtSamp", "kurtPop", "uniq", "uniqExact", "uniqCombined", "uniqCombined64", "uniqHLL12", "quantile", "quantiles", "quantileExact", "quantileExactLow", "quantileExactHigh", "quantileExactWeighted", "quantileTiming", "quantileTimingWeighted", "quantileDeterministic", "quantileTDigest", "quantileTDigestWeighted", "simpleLinearRegression", "stochasticLinearRegression", "stochasticLogisticRegression", "categoricalInformationValue"]
-    const functions = [...commonFunction, ...clickHouseFunction];
-    const keywords = removeDuplicateKeywords(Object.keys(CodeMirror.resolveMode('text/x-mysql').keywords));
-
+    const functions = [...commonFunction,  ...clickHouseFunction];
+    const builtInKeywords = CodeMirror.resolveMode('text/x-mysql').keywords;
+    const helpHints = ['?k.', '?f.', '?t.', '?c.'];
+    const keywords = [...removeDuplicateKeywords(Object.keys(builtInKeywords)), ...helpHints];
+    CodeMirror.resolveMode('text/x-mysql').keywords['parseDateTime32BestEffort'] = true;
+    // console.log('function', functions.length);
+    functions.forEach(func => builtInKeywords[func] = true);
+    if (keywordsAndFunctions.keywords) {
+      keywordsAndFunctions.keywords.forEach(keyword => builtInKeywords[keyword] = true);
+    }
+    if (keywordsAndFunctions.functions) {
+      keywordsAndFunctions.functions.forEach(func => builtInKeywords[func] = true);
+    }
+    console.log('CodeMirror.resolveMode()', CodeMirror.resolveMode('text/x-mysql'));
 
     function removeDuplicateKeywords (keywords) {
       const s = new Set(keywords);
       commonFunction.forEach(item => {s.delete(item)});
       return Array.from(s);
     }
+
+    // CodeMirror.defineOption("keyword", null, function(cm, val, prev) {
+    //   debugger;
+    //   if (prev == CodeMirror.Init) prev = false;
+    // if (prev && !val)
+    //   cm.removeOverlay("keyword");
+    // else if (!prev && val)
+    //   cm.addOverlay({
+    //     token: function(stream) {
+    //       for (var key in cm.options.keyword) {
+    //         if (stream.match(key, true)) {return cm.options.keyword[key];}
+    //       }
+    //       stream.next();
+    //     },
+    //     name: "keyword"
+    //   });
+    // });
+
+    CodeMirror.keyword = {
+      junior: 'style1',
+      price: 'style1',
+    };
   
     function isArray(val) { return Object.prototype.toString.call(val) == "[object Array]" }
   
@@ -125,9 +172,12 @@ export default function(CodeMirror) {
       // console.log(fuzzysearch2('slc', 'select'));
       var len = string.length;
       var sub = getText(word).substr(0, len);
-      // return string.toUpperCase() === sub.toUpperCase() || fuzzysearch(string.toUpperCase(), word.toUpperCase());
+      // return string.toUpperCase() === sub.toUpperCase();
+      if (string.toUpperCase() === word.toUpperCase()) {
+        return 'Strictly'
+      }
       if (string.toUpperCase() === sub.toUpperCase()) 
-        return 'Strictly';
+        return 'LessStrictly';
       return fuzzysearch(string.toUpperCase(), word.toUpperCase());
       // return includes(string, word);
     }
@@ -139,12 +189,19 @@ export default function(CodeMirror) {
         // console.log('fuse', fuse.search(search).map(res => formatter(res.item)));
         // result.push(...fuse.search(search).map(res => formatter(res.item)));
         for (var i = 0; i < wordlist.length; i++) {
-          if (match(search, wordlist[i]) === 'Strictly') {
+          const matchRes = match(search, wordlist[i]);
+          if (matchRes === 'Strictly') {
             result.push({
-              strict: true,
+              strict: 'Strictly',
               text: formatter(wordlist[i]),
             });
-          } else if (match(search, wordlist[i])) {
+          } else if (matchRes === 'LessStrictly') {
+            result.push({
+              strict: 'LessStrictly',
+              text: formatter(wordlist[i]),
+            });
+          } 
+           else if (matchRes) {
             result.push({
               strict: false,
               text: formatter(wordlist[i]),
@@ -163,12 +220,18 @@ export default function(CodeMirror) {
           else
             val = val.displayText ? {text: val.text, displayText: val.displayText} : val.text
           // if (match(search, val)) result.push(formatter(val))
-          if (match(search, val) === 'Strictly') {
+          const matchRes = match(search, val);
+          if (matchRes === 'Strictly') {
             result.push({
-              strict: true,
+              strict: 'Strictly',
               text: formatter(val),
             });
-          } else if (match(search, val)) {
+          } else if (matchRes === 'LessStrictly') {
+            result.push({
+              strict: 'LessStrictly',
+              text: formatter(val),
+            });
+          } else if (matchRes) {
             result.push({
               strict: false,
               text: formatter(val),
@@ -245,7 +308,7 @@ export default function(CodeMirror) {
       };
 
       // 根据 ?k. 尝试提供关键字
-      const keywordsTrigger = nameParts[0] === '?k';
+      const keywordsTrigger = nameParts[0].toUpperCase() === '?K';
       if (keywordsTrigger) {
         const search = tail(nameParts).join('.');
           addMatches(result, search, keywordsAndFunctions.keywords || keywords, function(w) {
@@ -255,17 +318,17 @@ export default function(CodeMirror) {
       }
 
       // 根据 ?f. 尝试提供关键字
-      const functionsTrigger = nameParts[0] === '?f';
+      const functionsTrigger = nameParts[0].toUpperCase() === '?F';
       if (functionsTrigger) {
         const search = tail(nameParts).join('.');
           addMatches(result, search, keywordsAndFunctions.functions || functions, function(w) {
-              return useIdentifierQuotes ? insertIdentifierQuotes(w.toUpperCase()) : objectOrClass(w.toUpperCase(), `CodeMirror-hint-function ${search}`);
+              return useIdentifierQuotes ? insertIdentifierQuotes(w) : objectOrClass(w, `CodeMirror-hint-function ${search}`);
             });
           return start;
       }
 
       // 根据 ?t. 尝试提供表名
-      const tablesTrigger = nameParts[0] === '?t';
+      const tablesTrigger = nameParts[0].toUpperCase() === '?T';
       console.log('tablesTrigger', tablesTrigger);
       if (tablesTrigger) {
         const search = tail(nameParts).join('.');
@@ -276,7 +339,7 @@ export default function(CodeMirror) {
       }
 
       // 根据 ?c. 尝试提供某张表的字段名
-      const columnssTrigger = nameParts[0] === '?c';
+      const columnssTrigger = nameParts[0].toUpperCase() === '?C';
       if (columnssTrigger) {
         const search = tail(nameParts).join('.')
         addMatches(result, search, singleTableColumns, function(w) {
@@ -318,13 +381,13 @@ export default function(CodeMirror) {
         addMatches(result, string, columns, function(w) {
           var tableInsert = table;
           if (alias == true) tableInsert = aliasTable;
-        //   if (typeof w == "string") {
-        //     w = tableInsert + "." + w;
-        //   } else {
-        //     w = shallowClone(w);
-        //     w.text = tableInsert + "." + w.text;
-        //   }
-          return useIdentifierQuotes ? insertIdentifierQuotes(w) : objectOrClass(w, `CodeMirror-hint-column ${string}`);
+          if (typeof w == "string") {
+            w = tableInsert + "." + w;
+          } else {
+            w = shallowClone(w);
+            w.text = tableInsert + "." + w.text;
+          }
+          return useIdentifierQuotes ? insertIdentifierQuotes(w) : objectOrClass(w, `CodeMirror-hint-column ${table}.${string}`);
         });
       }
   
@@ -441,7 +504,7 @@ export default function(CodeMirror) {
       }
       console.log('token', token, curLineBeforeToken, missNumber, getMissNumbers(curLineBeforeToken));
   
-      if (token.string.match(/^[.`"'\w@][\w$#]*$/g) || token.type === 'punctuation' || token.type === 'string') {
+      if (token.string.match(/^[.?`"'\w@][\w$#]*$/g) || token.type === 'punctuation' || token.type === 'string') {
         search = token.string;
         start = missNumber ? token.start - missRes.length : token.start;
         end = token.end;
@@ -452,7 +515,10 @@ export default function(CodeMirror) {
       }
       if (search.charAt(0) == ".") {
         start = nameCompletion(cur, token, result, editor, singleTableColumns, keywordsAndFunctions);
-      } else if ( token.type === 'number' || /^[~!@#$%^&*()?_+=]/ig.test(token.string)) {
+      } 
+      // else if ( token.type === 'number' || /^[~!@#$%^&*()?_+=]/ig.test(token.string)) {
+      else if ( /^([~!@#$%^&*()_+=/\\|{}\[\]]|\.+)/ig.test(token.string)) {
+        console.log('爷来啦');
         return {list: result, from: Pos(cur.line, start), to: Pos(cur.line, end)};
       }
         else {
@@ -473,7 +539,7 @@ export default function(CodeMirror) {
       //     return objectOrClass(w, "CodeMirror-hint-table CodeMirror-hint-default-table");
       // });
       addMatches(result, search, keywordsAndFunctions.functions || functions, function(w) {
-        return objectOrClass(w.toUpperCase(), `CodeMirror-hint-function ${search}`);
+        return objectOrClass(w, `CodeMirror-hint-function ${search}`);
     });
       addMatches(
           result,
@@ -493,12 +559,17 @@ export default function(CodeMirror) {
 
     // console.log('结果是', keywords, tables, result);
     const strictResult = [];
+    const lessStrictResult = [];
     const fuzzResult = [];
     result.forEach(item => {
-      item.strict ? strictResult.push(item.text) : fuzzResult.push(item.text)
+      if (item.strict === 'Strictly') strictResult.push(item.text);
+      else if (item.strict === 'LessStrictly') lessStrictResult.push(item. text);
+      else fuzzResult.push(item.text)
+      // item.strict ? strictResult.push(item.text) : fuzzResult.push(item.text);
     })
-    console.log('transform///', [...strictResult, ...fuzzResult]);
+    // console.log('transform///', [...strictResult, ...fuzzResult]);
+    // console.log('length', strictResult.length + lessStrictResult.length, fuzzResult.length, [...strictResult, ...lessStrictResult, ...fuzzResult]);
   
-      return {list: [...strictResult, ...fuzzResult], from: Pos(cur.line, start), to: Pos(cur.line, end)};
+      return {list: [...strictResult, ...lessStrictResult, ...fuzzResult], from: Pos(cur.line, start), to: Pos(cur.line, end)};
     });
 }

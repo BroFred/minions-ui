@@ -140,11 +140,15 @@ export default function(CodeMirror) {
     },
 
     pick(data, i) {
+      // console.log('pick了了了了了了了了了', i);
       const completion = data.list[i]; const
         self = this;
       this.cm.operation(() => {
-        if (completion.hint) completion.hint(self.cm, data, completion);
+        if (completion.hint) {
+          // console.log('here');
+          completion.hint(self.cm, data, completion)}
         else {
+          // console.log('elseelselelselelslesleslels');
           self.cm.replaceRange(getText(completion), completion.from || data.from,
             completion.to || data.to, 'complete');
         }
@@ -368,6 +372,8 @@ export default function(CodeMirror) {
 
     const completions = data.list;
     const fragment = document.createDocumentFragment();
+    let previousType = '';
+    // console.log('completionscompletionscompletions', completions);
     for (let i = 0; i < completions.length; ++i) {
       const elt = fragment.appendChild(ownerDocument.createElement('li'));
       const cur = completions[i];
@@ -377,34 +383,80 @@ export default function(CodeMirror) {
       if (i == this.selectedHint) elt.setAttribute('aria-selected', 'true');
       elt.id = `${this.id}-${i}`;
       elt.setAttribute('role', 'option');
+      const [type, search] = split(/\s/, cur.className);
       if (cur.render) cur.render(elt, data, cur);
       else {
         const hintText = cur.displayText || getText(cur);
         // console.log('cur.className', cur.className);
-        const [type, search] = split(/\s/, cur.className);
         const indexs = fuzzysearch(search.toUpperCase(), hintText.toUpperCase());
-        // console.log('currentInput', currentInput, indexs);
-        range(0, (hintText.length)).forEach((item, index) => {
-          const hintNode = ownerDocument.createElement('span');
-          if (indexs.length > 0 && indexs[0] !== -1 && indexs.includes(index)) {
-            hintNode.className = 'highlight';
+        // // console.log('currentInput', currentInput, indexs);
+        const hintNode = ownerDocument.createDocumentFragment();
+        if (indexs.length > 0) {
+          let i = 0, j = -1;
+          for (; i < indexs.length; ++i) {
+            if (j == -1) {
+              if (indexs[i] !== 0) {
+                const TextNode = ownerDocument.createElement('span');
+                TextNode.appendChild(ownerDocument.createTextNode(hintText.substring(0, indexs[i])));
+                hintNode.appendChild(TextNode);
+              }
+              const singleTextNode = ownerDocument.createElement('span');
+              singleTextNode.appendChild(ownerDocument.createTextNode(hintText.substring(indexs[i], indexs[i] + 1)));
+              singleTextNode.className = 'highlight';
+              hintNode.appendChild(singleTextNode);
+            } else {
+              if (indexs[i] !== j + 1){
+                const TextNode = ownerDocument.createElement('span');
+                TextNode.appendChild(ownerDocument.createTextNode(hintText.substring(j + 1, indexs[i])));
+                hintNode.appendChild(TextNode);
+              }
+              const singleTextNode = ownerDocument.createElement('span');
+              singleTextNode.appendChild(ownerDocument.createTextNode(hintText.substring(indexs[i], indexs[i] + 1)));
+              singleTextNode.className = 'highlight';
+              hintNode.appendChild(singleTextNode);
+            }
+            j = indexs[i];
           }
-          hintNode.appendChild(ownerDocument.createTextNode(hintText[item]));
-          elt.appendChild(hintNode);
-        });
+          if (j < hintText.length) {
+            const TextNode = ownerDocument.createElement('span');
+            TextNode.appendChild(ownerDocument.createTextNode(hintText.substring(j + 1, hintText.length)));
+            hintNode.appendChild(TextNode);
+          }
+        } else {
+          const TextNode = ownerDocument.createElement('span');
+            TextNode.appendChild(ownerDocument.createTextNode(hintText));
+            hintNode.appendChild(TextNode);
+        }
+        // range(0, (hintText.length)).forEach((item, index) => {
+        //   const singleTextNode = ownerDocument.createElement('i');
+        //   singleTextNode.appendChild(ownerDocument.createTextNode(hintText[item]));
+        //   // const singleTextNode = ownerDocument.createTextNode(hintText[item]);
+        //   if (indexs.length > 0 && indexs[0] !== -1 && indexs.includes(index)) {
+        //     singleTextNode.className = 'highlight';
+        //   }
+        //   hintNode.appendChild(singleTextNode)
+        // });
+        elt.appendChild(hintNode);
+        // console.log('hintNodehintNodehintNode', hintNode.children);
         // elt.appendChild(ownerDocument.createTextNode(cur.displayText || getText(cur)));
-        const typeNode = ownerDocument.createElement('span');
-        typeNode.className = 'type';
-        typeNode.appendChild(ownerDocument.createTextNode(getTypeName(last(split('-', type)))));
-        elt.appendChild(typeNode);
+        // const justType = last(split('-', type));
+        // if (justType === 'table' || justType === 'column') {
+        //   const typeNode = ownerDocument.createElement('span');
+        //   typeNode.className = 'type';
+        //   typeNode.appendChild(ownerDocument.createTextNode(getTypeName(justType)));
+        //   elt.appendChild(typeNode);
+        // }
+        // previousType = type;
         // elt.appendChild(ownerDocument.createTextNode(cur.displayText || getText(cur)));
         // elt.appendChild(ownerDocument.createTextNode('xxx'));
         // ReactDOM.render(<HintItem text={cur.displayText || getText(cur)} type={last(split('-', cur.className))} />, elt);
       }
       elt.hintId = i;
+      // if (search === 'ad_l') {
+      //   debugger;
+      // }
     }
     hints.appendChild(fragment);
-
     const container = completion.options.container || ownerDocument.body;
     let pos = cm.cursorCoords(completion.options.alignWithWord ? data.from : null);
     let left = pos.left; let top = pos.bottom; let
@@ -422,6 +474,9 @@ export default function(CodeMirror) {
     }
     hints.style.left = `${left - offsetLeft}px`;
     hints.style.top = `${top - offsetTop}px`;
+    // hints.style.left = `100px`;
+    // hints.style.top = `100px`;
+    // hints.style.position = 'fixed'
 
     // If we're at the edge of the screen, then we want the menu to appear on the left of the cursor.
     const winW = parentWindow.innerWidth || Math.max(ownerDocument.body.offsetWidth, ownerDocument.documentElement.offsetWidth);

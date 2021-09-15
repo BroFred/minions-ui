@@ -1835,7 +1835,7 @@ export const tableList = [
                 "codec_expression":""
             }
         ],
-        "name":"access.a",
+        "name":"access",  //access.a
         "alias":"accessAlias",
         "description":"desc"
     },

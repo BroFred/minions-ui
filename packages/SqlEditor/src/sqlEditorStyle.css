@@ -56,3 +56,16 @@ li.CodeMirror-hint-active {
     background: #26292E;
     color: white;
   }
+
+.cm-style1 {
+  color: forestgreen !important;
+}
+
+/* .codemirror-highlighted {
+  background-color: red !important;
+} */
+
+.line-error {
+  /* color: yellow !important; */
+  background-color: red !important;
+}
